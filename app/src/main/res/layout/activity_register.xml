@@ -6,4 +6,133 @@
     android:layout_height="match_parent"
     tools:context=".Register">
 
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#FFFFFF"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/tvCreateAccount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="24dp"
+            android:text="Create account!"
+            android:textSize="30sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvRegisterToGetStarted"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tvCreateAccount"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="8dp"
+            android:text="Register to get started."
+            android:textSize="16sp" />
+
+        <!-- Replace with TextInputLayout if using Material Design components -->
+        <EditText
+            android:id="@+id/etName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tvRegisterToGetStarted"
+            android:layout_marginTop="32dp"
+            android:drawableStart="@drawable/ic_person_outline"
+            android:hint="Name" />
+
+        <EditText
+            android:id="@+id/etEmail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/etName"
+            android:layout_marginTop="16dp"
+            android:drawableStart="@drawable/ic_email_outline"
+            android:hint="Email Address"
+            android:inputType="textEmailAddress" />
+
+        <EditText
+            android:id="@+id/etPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/etEmail"
+            android:layout_marginTop="16dp"
+            android:drawableStart="@drawable/ic_lock_outline"
+            android:hint="Password"
+            android:inputType="textPassword" />
+
+        <EditText
+            android:id="@+id/etConfirmPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/etPassword"
+            android:layout_marginTop="16dp"
+            android:drawableStart="@drawable/ic_lock_outline"
+            android:hint="Confirm Password"
+            android:inputType="textPassword" />
+
+        <CheckBox
+            android:id="@+id/cbTerms"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/etConfirmPassword"
+            android:layout_marginTop="16dp"
+            android:text="By registering, you are agreeing with our Terms of Use and Privacy Policy" />
+
+        <Button
+            android:id="@+id/btnRegister"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/cbTerms"
+            android:layout_marginTop="16dp"
+            android:background="#4CAF50"
+            android:text="Register"
+            android:textColor="#FFFFFF" />
+
+        <!-- Social buttons would be styled accordingly, these are just placeholders -->
+        <LinearLayout
+            android:id="@+id/llSocialButtons"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/btnRegister"
+            android:layout_marginTop="16dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnGoogle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:text="G" />
+
+            <Button
+                android:id="@+id/btnFacebook"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:text="F" />
+
+            <Button
+                android:id="@+id/btnApple"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="A" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvLogin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/llSocialButtons"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="16dp"
+            android:text="Already have an account? Log in"
+            android:textColor="#0000FF" />
+
+    </RelativeLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
