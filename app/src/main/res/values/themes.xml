@@ -1,0 +1,9 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <style name="Base.Theme.CalendarApp" parent="Theme.MaterialComponents.Bridge">
+        <item name="colorPrimary">@color/colorPrimary</item>
+    </style>
+    <style name="Theme.CalendarApp" parent="Base.Theme.CalendarApp" />
+    <style name="Theme.MaterialCalendarApp" parent="Base.Theme.CalendarApp">
+        <item name="android:textColor">@color/white</item>
+    </style>
+</resources>
