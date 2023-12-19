@@ -20,9 +20,11 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         auth = FirebaseAuth.getInstance();
+        print(auth)
         button = findViewById(R.id.logout);
         textView = findViewById(R.id.user_details);
         user = auth!!.currentUser;
+        print(user)
         if (user == null) {
             val intent = Intent(applicationContext, Login::class.java)
             startActivity(intent)
