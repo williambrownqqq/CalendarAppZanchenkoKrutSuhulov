@@ -23,31 +23,43 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="8dp"/>
 
-    <EditText
+    <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="28dp"
-        android:drawableStart="@drawable/ic_email"
-        android:drawablePadding="10dp"
-        android:hint="Email Address" />
+        android:layout_height="wrap_content">
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/email"
+            android:layout_marginTop="28dp"
+            android:drawableStart="@drawable/ic_email"
+            android:drawablePadding="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Email Address" />
+    </com.google.android.material.textfield.TextInputLayout>
 
-    <EditText
+    <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Password"
-        android:inputType="textPassword"
-        android:layout_marginTop="16dp"
-        android:drawableStart="@drawable/ic_lock"
-        android:drawablePadding="10dp"/>
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Password"
+            android:inputType="textPassword"
+            android:layout_marginTop="16dp"
+            android:drawableStart="@drawable/ic_lock"
+            android:drawablePadding="10dp"/>
+    </com.google.android.material.textfield.TextInputLayout>
 
     <Button
+        android:id="@+id/btn_register"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:text="Register"
-        android:background="#FF5019"
-        android:textColor="#FFFFFF"
+        android:layout_gravity="center_horizontal"
         android:layout_marginTop="16dp"
-        android:layout_gravity="center_horizontal"/>
+        android:background="#FF5019"
+        android:text="Register"
+        android:textColor="#FFFFFF" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -76,5 +88,11 @@
             android:contentDescription="apple_icon"
             android:src="@drawable/apple_icon" />
     </LinearLayout>
-
+    <TextView
+        android:id="@+id/loginNow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="16dp"
+        android:text="Already registered? Login" />
 </LinearLayout>
