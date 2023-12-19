@@ -1,138 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Register">
+    android:padding="24dp"
+    android:background="#F0F4F7">
 
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Create account!"
+        android:textSize="24sp"
+        android:textColor="#000"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="40dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Register to get started."
+        android:textSize="16sp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="8dp"/>
+
+    <EditText
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#FFFFFF"
-        android:padding="16dp">
+        android:layout_height="wrap_content"
+        android:hint="Email Address"
+        android:layout_marginTop="28dp"
+        android:drawableStart="@drawable/ic_email"
+        android:drawablePadding="10dp"/>
 
-        <TextView
-            android:id="@+id/tvCreateAccount"
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Password"
+        android:inputType="textPassword"
+        android:layout_marginTop="16dp"
+        android:drawableStart="@drawable/ic_lock"
+        android:drawablePadding="10dp"/>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:text="Register"
+        android:background="#FF5019"
+        android:textColor="#FFFFFF"
+        android:layout_marginTop="16dp"
+        android:layout_gravity="center_horizontal"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Or connect via"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="16dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginTop="16dp">
+
+        <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="24dp"
-            android:text="Create account!"
-            android:textSize="30sp"
-            android:textStyle="bold" />
+            android:src="@drawable/google_icon"
+            android:contentDescription="google_icon" />
 
-        <TextView
-            android:id="@+id/tvRegisterToGetStarted"
+        <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/tvCreateAccount"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="8dp"
-            android:text="Register to get started."
-            android:textSize="16sp" />
+            android:src="@drawable/apple_icon"
+            android:layout_marginStart="16dp"
+            android:contentDescription="apple_icon" />
+    </LinearLayout>
 
-        <!-- Replace with TextInputLayout if using Material Design components -->
-        <EditText
-            android:id="@+id/etName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/tvRegisterToGetStarted"
-            android:layout_marginTop="32dp"
-            android:drawableStart="@drawable/ic_person_outline"
-            android:hint="Name" />
-
-        <EditText
-            android:id="@+id/etEmail"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/etName"
-            android:layout_marginTop="16dp"
-            android:drawableStart="@drawable/ic_email_outline"
-            android:hint="Email Address"
-            android:inputType="textEmailAddress" />
-
-        <EditText
-            android:id="@+id/etPassword"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/etEmail"
-            android:layout_marginTop="16dp"
-            android:drawableStart="@drawable/ic_lock_outline"
-            android:hint="Password"
-            android:inputType="textPassword" />
-
-        <EditText
-            android:id="@+id/etConfirmPassword"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/etPassword"
-            android:layout_marginTop="16dp"
-            android:drawableStart="@drawable/ic_lock_outline"
-            android:hint="Confirm Password"
-            android:inputType="textPassword" />
-
-        <CheckBox
-            android:id="@+id/cbTerms"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/etConfirmPassword"
-            android:layout_marginTop="16dp"
-            android:text="By registering, you are agreeing with our Terms of Use and Privacy Policy" />
-
-        <Button
-            android:id="@+id/btnRegister"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/cbTerms"
-            android:layout_marginTop="16dp"
-            android:background="#4CAF50"
-            android:text="Register"
-            android:textColor="#FFFFFF" />
-
-        <!-- Social buttons would be styled accordingly, these are just placeholders -->
-        <LinearLayout
-            android:id="@+id/llSocialButtons"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/btnRegister"
-            android:layout_marginTop="16dp"
-            android:gravity="center"
-            android:orientation="horizontal">
-
-            <Button
-                android:id="@+id/btnGoogle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:text="G" />
-
-            <Button
-                android:id="@+id/btnFacebook"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp"
-                android:text="F" />
-
-            <Button
-                android:id="@+id/btnApple"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:text="A" />
-        </LinearLayout>
-
-        <TextView
-            android:id="@+id/tvLogin"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/llSocialButtons"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="16dp"
-            android:text="Already have an account? Log in"
-            android:textColor="#0000FF" />
-
-    </RelativeLayout>
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>
