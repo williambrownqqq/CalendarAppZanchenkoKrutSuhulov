@@ -26,10 +26,10 @@
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Email Address"
         android:layout_marginTop="28dp"
         android:drawableStart="@drawable/ic_email"
-        android:drawablePadding="10dp"/>
+        android:drawablePadding="10dp"
+        android:hint="Email Address" />
 
     <EditText
         android:layout_width="match_parent"
@@ -64,17 +64,17 @@
         android:layout_marginTop="16dp">
 
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/google_icon"
-            android:contentDescription="google_icon" />
+            android:layout_width="116dp"
+            android:layout_height="70dp"
+            android:contentDescription="google_icon"
+            android:src="@drawable/google_icon" />
 
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/apple_icon"
+            android:layout_width="115dp"
+            android:layout_height="70dp"
             android:layout_marginStart="16dp"
-            android:contentDescription="apple_icon" />
+            android:contentDescription="apple_icon"
+            android:src="@drawable/apple_icon" />
     </LinearLayout>
 
 </LinearLayout>
