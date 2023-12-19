@@ -14,7 +14,7 @@
         android:theme="@style/Theme.CalendarApp"
         tools:targetApi="31">
         <activity
-            android:name=".MainActivity"
+            android:name="com.zanchenkoKrutSugulov.calendarapp.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -23,7 +23,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name="com.luisbb.calendarapp.activities.DateActivity"
+        <activity android:name="com.zanchenkoKrutSugulov.calendarapp.activities.DateActivity"
             android:exported="true"
             >
             <intent-filter>
@@ -31,7 +31,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".activities.CreateEventActivity"
+        <activity android:name="com.zanchenkoKrutSugulov.calendarapp.activities.CreateEventActivity"
             android:exported="true"
             >
             <intent-filter>
@@ -39,7 +39,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".activities.EditEventActivity"
+        <activity android:name="com.zanchenkoKrutSugulov.calendarapp.activities.EditEventActivity"
             android:exported="true"
             >
             <intent-filter>
