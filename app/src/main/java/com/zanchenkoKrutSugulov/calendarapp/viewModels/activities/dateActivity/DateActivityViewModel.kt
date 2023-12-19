@@ -1,4 +1,4 @@
-package com.luisbb.calendarapp.viewModels.activities.dateActivity
+package com.zanchenkoKrutSugulov.calendarapp.viewModels.activities.dateActivity
 
 import android.app.Application
 import android.os.Build
@@ -8,9 +8,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.calendarapp.database.dao.DateEventDatabase
-import com.luisbb.calendarapp.dataClasses.db.DateEvent
-import com.luisbb.calendarapp.viewModels.dateEvent.DateEventViewModel
-import com.luisbb.calendarapp.viewModels.dateEvent.DateEventViewModelFactory
+import com.zanchenkoKrutSugulov.calendarapp.dataClasses.db.DateEvent
+import com.zanchenkoKrutSugulov.calendarapp.viewModels.dateEvent.DateEventViewModel
+import com.zanchenkoKrutSugulov.calendarapp.viewModels.dateEvent.DateEventViewModelFactory
 import java.time.ZonedDateTime
 
 @RequiresApi(Build.VERSION_CODES.O)
