@@ -41,43 +41,6 @@
           ]
         }
       }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:508784181273:android:9130a2374e39367fff2a88",
-        "android_client_info": {
-          "package_name": "com.luisbb.calendarapp"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "508784181273-hf35hgqdf8aiel9202mrdfp6s7okp9ra.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.luisbb.calendarapp",
-            "certificate_hash": "a39fae18a2c42a31396ce3e7e10057bac2451133"
-          }
-        },
-        {
-          "client_id": "508784181273-e5ujrb1b78t481p7q3k65lq6o2tvbitt.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyAzmPvgizF_6hkRYRos0s1iZYRU5seW-mA"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "508784181273-e5ujrb1b78t481p7q3k65lq6o2tvbitt.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        }
-      }
     }
   ],
   "configuration_version": "1"

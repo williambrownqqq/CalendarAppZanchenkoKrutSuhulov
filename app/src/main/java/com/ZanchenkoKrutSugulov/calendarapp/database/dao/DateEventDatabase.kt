@@ -1,4 +1,4 @@
-package com.example.calendarapp.database.dao
+package com.ZanchenkoKrutSugulov.calendarapp.database.dao
 
 import android.content.Context
 import androidx.room.Database
