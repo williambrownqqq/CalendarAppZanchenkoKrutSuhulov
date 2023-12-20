@@ -1,10 +1,11 @@
-package com.ZanchenkoKrutSugulov.calendarapp.database.dao
+package com.example.calendarapp.database.dao
 
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.ZanchenkoKrutSugulov.calendarapp.dataClasses.db.DateEvent
+import com.ZanchenkoKrutSugulov.calendarapp.database.dao.DateEventDao
 
 @Database(entities=[DateEvent::class], version = 1, exportSchema = false)
 abstract class DateEventDatabase: RoomDatabase() {
