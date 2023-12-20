@@ -1,4 +1,4 @@
-package com.luisbb.calendarapp
+package com.ZanchenkoKrutSugulov.calendarapp
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
