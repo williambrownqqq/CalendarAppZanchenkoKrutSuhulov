@@ -19,7 +19,8 @@
             android:padding="8dp">
 
             <ImageView
-                android:layout_width="37dp"
+                android:id="@+id/backFromUserProfile"
+                android:layout_width="34dp"
                 android:layout_height="wrap_content"
                 android:contentDescription="arrow-back-user-profile"
                 android:src="@drawable/ic_arrow_back" />
@@ -52,12 +53,20 @@
             android:layout_marginTop="15dp"
             android:layout_marginBottom="0dp"
             android:text="Email" />
-
-        <EditText
-            android:id="@+id/editTextEmail"
+        <TextView
+            android:id="@+id/userEmail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="User Email" />
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="0dp"
+            android:textSize="20sp"
+            android:text="User Email" />
+
+<!--        <EditText-->
+<!--            android:id="@+id/editTextEmail"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:hint="User Email" />-->
 
         <TextView
             android:layout_width="match_parent"
@@ -66,12 +75,19 @@
             android:layout_marginBottom="0dp"
             android:text="Password" />
 
-        <EditText
-            android:id="@+id/editTextFullName"
+<!--        <EditText-->
+<!--            android:id="@+id/editTextFullName"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:hint="**********" />-->
+        <TextView
+            android:id="@+id/Password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="**********" />
-
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="0dp"
+            android:textSize="20sp"
+            android:text="***************" />
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
