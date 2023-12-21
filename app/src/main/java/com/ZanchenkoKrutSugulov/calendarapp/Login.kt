@@ -12,6 +12,7 @@ import android.widget.Toast
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
 
+
 class Login : AppCompatActivity() {
     private var editTextEmail: TextInputEditText? = null
     private var editTextPassword: TextInputEditText? = null

@@ -3,7 +3,6 @@ package com.ZanchenkoKrutSugulov.calendarapp
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.text.TextUtils
 import android.view.View
 import android.widget.Button
 import android.widget.ProgressBar
@@ -47,37 +46,6 @@ class Register: AppCompatActivity() {
             finish()
         })
 
-//        buttonReg!!.setOnClickListener(View.OnClickListener {
-//            progressBar!!.visibility = View.VISIBLE
-//            val email: String = editTextEmail!!.text.toString()
-//            val password: String = editTextPassword!!.text.toString()
-//            if (TextUtils.isEmpty(email)) {
-//                Toast.makeText(this@Register, "Enter email", Toast.LENGTH_SHORT).show()
-//                return@OnClickListener
-//            }
-//            if (TextUtils.isEmpty(password)) {
-//                Toast.makeText(this@Register, "Enter password", Toast.LENGTH_SHORT).show()
-//                return@OnClickListener
-//            }
-//            mAuth!!.createUserWithEmailAndPassword(email, password)
-//                .addOnCompleteListener { task ->
-//                    progressBar!!.visibility = View.GONE
-//                    if (task.isSuccessful) {
-//                        Toast.makeText(
-//                            this@Register, "Account created.",
-//                            Toast.LENGTH_SHORT
-//                        ).show()
-//                        val intent = Intent(applicationContext, Login::class.java)
-//                        startActivity(intent)
-//                        finish()
-//                    } else {
-//                        Toast.makeText(
-//                            this@Register, "Authentication failed!",
-//                            Toast.LENGTH_SHORT
-//                        ).show()
-//                    }
-//                }
-//        })
     fun isValidEmail(email: String): Boolean {
         val regex = Regex("[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}")
         return regex.matches(email)

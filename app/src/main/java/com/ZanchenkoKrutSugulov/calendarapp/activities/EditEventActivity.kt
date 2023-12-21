@@ -167,7 +167,7 @@ class EditEventActivity: AppCompatActivity() {
             activityViewModel.minute = minuteSpinner.selectedItem.toString().toInt()
         }
 
-        activityViewModel.saveEvent()
+        activityViewModel.submitDateEvent()
         this.finish()
     }
 
