@@ -6,6 +6,6 @@
     <color name="colorPrimary">#404040</color>
     <color name="dayWithEvent">#FA8015</color>
     <color name="currentDayWithEvent">#FDBC82</color>
-
+    <color name="connectedButton">#FFC107</color>
 
 </resources>
