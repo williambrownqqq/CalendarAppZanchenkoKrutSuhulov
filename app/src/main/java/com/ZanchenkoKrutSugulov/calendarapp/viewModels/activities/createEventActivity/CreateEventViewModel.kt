@@ -1,4 +1,4 @@
-package com.zanchenkoKrutSugulov.calendarapp.viewModels.activities.createEventActivity
+package com.ZanchenkoKrutSugulov.calendarapp.viewModels.activities.createEventActivity
 
 import android.app.Application
 import android.os.Build
@@ -7,10 +7,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.example.calendarapp.database.dao.DateEventDatabase
-import com.zanchenkoKrutSugulov.calendarapp.dataClasses.db.DateEvent
-import com.zanchenkoKrutSugulov.calendarapp.viewModels.dateEvent.DateEventViewModel
-import com.zanchenkoKrutSugulov.calendarapp.viewModels.dateEvent.DateEventViewModelFactory
+import com.ZanchenkoKrutSugulov.calendarapp.database.dao.DateEventDatabase
+import com.ZanchenkoKrutSugulov.calendarapp.dataClasses.db.DateEvent
+import com.ZanchenkoKrutSugulov.calendarapp.viewModels.dateEvent.DateEventViewModel
+import com.ZanchenkoKrutSugulov.calendarapp.viewModels.dateEvent.DateEventViewModelFactory
 import kotlinx.coroutines.launch
 import java.time.ZonedDateTime
 

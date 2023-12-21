@@ -1,4 +1,4 @@
-package com.luisbb.calendarapp
+package com.ZanchenkoKrutSugulov.calendarapp
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -11,6 +11,7 @@ import android.widget.TextView
 import android.widget.Toast
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
+
 
 class Login : AppCompatActivity() {
     private var editTextEmail: TextInputEditText? = null

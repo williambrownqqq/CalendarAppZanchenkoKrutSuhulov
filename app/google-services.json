@@ -1,26 +1,44 @@
 {
   "project_info": {
-    "project_number": "590067293787",
-    "project_id": "calendar-92d91",
-    "storage_bucket": "calendar-92d91.appspot.com"
+    "project_number": "508784181273",
+    "project_id": "calendar-ef023",
+    "storage_bucket": "calendar-ef023.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:590067293787:android:c61f7da6b870486faea97e",
+        "mobilesdk_app_id": "1:508784181273:android:7c72deccf1820400ff2a88",
         "android_client_info": {
-          "package_name": "com.luisbb.calendarapp"
+          "package_name": "com.ZanchenkoKrutSugulov.calendarapp"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "508784181273-3l4do7pkonptaf04e42regfh9f46v85p.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ZanchenkoKrutSugulov.calendarapp",
+            "certificate_hash": "a39fae18a2c42a31396ce3e7e10057bac2451133"
+          }
+        },
+        {
+          "client_id": "508784181273-e5ujrb1b78t481p7q3k65lq6o2tvbitt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
-          "current_key": "AIzaSyBWNZH7C_c3o19B7HhcAHNv1SXcS7-z4lE"
+          "current_key": "AIzaSyAzmPvgizF_6hkRYRos0s1iZYRU5seW-mA"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "508784181273-e5ujrb1b78t481p7q3k65lq6o2tvbitt.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
