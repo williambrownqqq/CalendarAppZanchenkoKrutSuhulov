@@ -7,16 +7,20 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <TextView
-        android:id="@+id/user_details"
+<!--    <TextView-->
+<!--        android:id="@+id/user_details"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="username" />-->
+
+<!--    <Button-->
+<!--        android:text="Logout"-->
+<!--        android:id="@+id/logout"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content" />-->
+    <Button
+        android:id="@+id/buttonShowProfile"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="username" />
-
-    <Button
-        android:text="Logout"
-        android:id="@+id/logout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
+        android:text="Show Profile" />
 </LinearLayout>

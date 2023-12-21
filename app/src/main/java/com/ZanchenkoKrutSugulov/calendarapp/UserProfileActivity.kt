@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.TextView
 import com.ZanchenkoKrutSugulov.calendarapp.dataClasses.User
 import com.google.firebase.auth.FirebaseAuth
@@ -17,7 +18,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 class UserProfileActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
     private lateinit var buttonLogout: Button
-    private lateinit var backButton: Button
+    private lateinit var backButton: ImageView
     private lateinit var userEmailView: TextView
     private var currentUser: FirebaseUser? = null
 
@@ -31,12 +32,7 @@ class UserProfileActivity : AppCompatActivity() {
         userEmailView = findViewById(R.id.userEmail)
         currentUser = auth.currentUser
 
-        if (currentUser == null) {
-            startLoginActivity()
-        } else {
-            loadUserProfile()
-        }
-
+        loadUserProfile()
         buttonLogout.setOnClickListener {
             auth.signOut()
             startLoginActivity()

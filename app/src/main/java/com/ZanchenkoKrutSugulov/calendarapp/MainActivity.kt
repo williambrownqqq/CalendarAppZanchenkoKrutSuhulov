@@ -15,8 +15,7 @@ import com.ZanchenkoKrutSugulov.calendarapp.dataClasses.User
 
 class MainActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
-    private lateinit var buttonLogout: Button
-    private lateinit var textViewUserDetails: TextView
+    private lateinit var buttonShowProfile: Button
     private var currentUser: FirebaseUser? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,38 +23,18 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         auth = FirebaseAuth.getInstance()
-        buttonLogout = findViewById(R.id.logout)
-        textViewUserDetails = findViewById(R.id.user_details)
+        buttonShowProfile = findViewById(R.id.buttonShowProfile)
         currentUser = auth.currentUser
 
+
+        buttonShowProfile.setOnClickListener {
+            startActivity(Intent(this, UserProfileActivity::class.java))
+        }
         if (currentUser == null) {
-            startLoginActivity()
-        } else {
-            loadUserProfile()
+            startActivity(Intent(this, Login::class.java))
+            finish()
         }
 
-        buttonLogout.setOnClickListener {
-            auth.signOut()
-            startLoginActivity()
-        }
     }
 
-    private fun startLoginActivity() {
-//        val intent = Intent(this, Login::class.java)
-        startActivity(Intent(this, Login::class.java))
-        finish()
-    }
-
-    private fun loadUserProfile() {
-        val userId = currentUser!!.uid
-        val db = FirebaseFirestore.getInstance()
-        val docRef = db.collection("users").document(userId)
-
-        docRef.get().addOnSuccessListener { documentSnapshot ->
-            val userProfile = documentSnapshot.toObject(User::class.java)
-            textViewUserDetails.text = userProfile?.email
-        }.addOnFailureListener { exception ->
-            Log.w("MainActivity", "Error getting user details: ", exception)
-        }
-    }
 }
