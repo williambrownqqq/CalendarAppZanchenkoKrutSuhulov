@@ -17,8 +17,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
     private lateinit var buttonLogout: Button
     private lateinit var textViewUserDetails: TextView
-    private lateinit var textViewName: TextView
-    private lateinit var textViewLastname: TextView
     private var currentUser: FirebaseUser? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,8 +26,6 @@ class MainActivity : AppCompatActivity() {
         auth = FirebaseAuth.getInstance()
         buttonLogout = findViewById(R.id.logout)
         textViewUserDetails = findViewById(R.id.user_details)
-        textViewName = findViewById(R.id.user_name)
-        textViewLastname = findViewById(R.id.user_surname)
         currentUser = auth.currentUser
 
         if (currentUser == null) {
@@ -58,8 +54,6 @@ class MainActivity : AppCompatActivity() {
         docRef.get().addOnSuccessListener { documentSnapshot ->
             val userProfile = documentSnapshot.toObject(User::class.java)
             textViewUserDetails.text = userProfile?.email
-            textViewName.text = userProfile?.firstName ?: "No name"
-            textViewLastname.text = userProfile?.lastName ?: "No surname"
         }.addOnFailureListener { exception ->
             Log.w("MainActivity", "Error getting user details: ", exception)
         }
