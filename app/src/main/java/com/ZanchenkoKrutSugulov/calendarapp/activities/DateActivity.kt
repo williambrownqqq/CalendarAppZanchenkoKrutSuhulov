@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.ZanchenkoKrutSugulov.calendarapp.R
 import com.ZanchenkoKrutSugulov.calendarapp.dataClasses.db.DateEvent
+import com.ZanchenkoKrutSugulov.calendarapp.utils.getDaysOfWeekArray
 import com.ZanchenkoKrutSugulov.calendarapp.recycleViews.EventsRecycleViewAdapter
 import com.ZanchenkoKrutSugulov.calendarapp.utils.epochSecondToLocalDate
 import com.ZanchenkoKrutSugulov.calendarapp.utils.getMonthsArray
@@ -61,8 +62,9 @@ class DateActivity: AppCompatActivity() {
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun setupTextViews() {
+        val currentDay = getDaysOfWeekArray()[date.dayOfWeek.value - 1]
         val dateText = findViewById<TextView>(R.id.tvDate)
-        dateText.text = "${date.dayOfMonth} de ${getMonthsArray()[date.monthValue - 1]} de ${date.year}"
+        dateText.text = "${currentDay}, ${date.dayOfMonth} de ${getMonthsArray()[date.monthValue - 1]} de ${date.year}"
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
