@@ -1,4 +1,4 @@
-package com.ZanchenkoKrutSugulov.calendarapp.database.dao
+package com.ZanchenkoKrutSugulov.calendarapp.dao
 
 import androidx.lifecycle.LiveData
 import androidx.room.Dao

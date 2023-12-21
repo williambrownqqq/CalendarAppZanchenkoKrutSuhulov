@@ -8,7 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.ZanchenkoKrutSugulov.calendarapp.database.dao.DateEventDatabase
+import com.ZanchenkoKrutSugulov.calendarapp.dao.DateEventDatabase
 import com.ZanchenkoKrutSugulov.calendarapp.dataClasses.db.DateEvent
 import com.ZanchenkoKrutSugulov.calendarapp.viewModels.dateEvent.DateEventViewModel
 import com.ZanchenkoKrutSugulov.calendarapp.viewModels.dateEvent.DateEventViewModelFactory

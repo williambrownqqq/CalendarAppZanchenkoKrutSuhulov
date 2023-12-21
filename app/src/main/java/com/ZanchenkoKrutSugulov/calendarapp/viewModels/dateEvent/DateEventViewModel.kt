@@ -6,7 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ZanchenkoKrutSugulov.calendarapp.dataClasses.db.DateEvent
-import com.ZanchenkoKrutSugulov.calendarapp.database.dao.DateEventDao
+import com.ZanchenkoKrutSugulov.calendarapp.dao.DateEventDao
 import kotlinx.coroutines.launch
 import java.time.ZonedDateTime
 

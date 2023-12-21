@@ -2,7 +2,7 @@ package com.ZanchenkoKrutSugulov.calendarapp.viewModels.dateEvent
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.ZanchenkoKrutSugulov.calendarapp.database.dao.DateEventDao
+import com.ZanchenkoKrutSugulov.calendarapp.dao.DateEventDao
 
 class DateEventViewModelFactory(private val dateEventDao: DateEventDao): ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
