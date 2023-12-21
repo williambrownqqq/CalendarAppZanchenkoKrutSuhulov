@@ -1,8 +1,8 @@
 package com.ZanchenkoKrutSugulov.calendarapp.dataClasses
 
 data class User(
-    val uid: String,
-    val email: String,
+    val uid: String = "",
+    val email: String? = null,
     val firstName: String? = null,
     val lastName: String? = null,
     val googleAccountId: String? = null,

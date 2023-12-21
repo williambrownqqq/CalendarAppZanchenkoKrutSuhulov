@@ -9,13 +9,15 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.ZanchenkoKrutSugulov.calendarapp.dataClasses.User
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 
-class Register: AppCompatActivity() {
+class Register : AppCompatActivity() {
     private var editTextEmail: TextInputEditText? = null
-    private var editTextPassword:TextInputEditText? = null
+    private var editTextPassword: TextInputEditText? = null
     private var buttonReg: Button? = null
     private var mAuth: FirebaseAuth? = null
     private var progressBar: ProgressBar? = null
@@ -29,6 +31,11 @@ class Register: AppCompatActivity() {
             startActivity(intent)
             finish()
         }
+    }
+
+    fun isValidEmail(email: String): Boolean {
+        val regex = Regex("[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}")
+        return regex.matches(email)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,11 +53,6 @@ class Register: AppCompatActivity() {
             finish()
         })
 
-    fun isValidEmail(email: String): Boolean {
-        val regex = Regex("[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}")
-        return regex.matches(email)
-    }
-
         buttonReg!!.setOnClickListener OnClickListener@{
             progressBar!!.visibility = View.VISIBLE
             val email: String = editTextEmail!!.text.toString().trim()
@@ -62,7 +64,11 @@ class Register: AppCompatActivity() {
             }
 
             if (password.length < 6) {
-                Toast.makeText(this@Register, "Password must be at least 6 characters long", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    this@Register,
+                    "Password must be at least 6 characters long",
+                    Toast.LENGTH_SHORT
+                ).show()
                 return@OnClickListener
             }
 
@@ -72,6 +78,23 @@ class Register: AppCompatActivity() {
                 .addOnCompleteListener { task ->
                     progressBar!!.visibility = View.GONE
                     if (task.isSuccessful) {
+                        val user = mAuth!!.currentUser
+                        val db = FirebaseFirestore.getInstance()
+
+                        val newUser = User(
+                            uid = user!!.uid,
+                            email = user.email!!,
+                            firstName = "Имя",
+                            lastName = "Фамилия"
+                        )
+
+                        db.collection("users").document(user.uid).set(newUser)
+                            .addOnSuccessListener {
+                                Log.d("RegisterActivity", "Данные пользователя сохранены в Firestore")
+                            }
+                            .addOnFailureListener { e ->
+                                Log.w("RegisterActivity", "Ошибка при сохранении данных пользователя", e)
+                            }
                         Toast.makeText(
                             this@Register, "Account created.",
                             Toast.LENGTH_SHORT
@@ -87,7 +110,5 @@ class Register: AppCompatActivity() {
                     }
                 }
         }
-
-
     }
 }

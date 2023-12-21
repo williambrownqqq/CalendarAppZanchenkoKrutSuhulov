@@ -11,6 +11,18 @@
         android:id="@+id/user_details"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="username" />
+
+    <TextView
+        android:id="@+id/user_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="userlastname" />
+
+    <TextView
+        android:id="@+id/user_surname"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:text="Hello World!" />
 
     <Button
