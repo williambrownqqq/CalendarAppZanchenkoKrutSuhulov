@@ -10,6 +10,7 @@
         android:gravity="center"
         android:orientation="vertical"
         android:padding="16dp">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="55dp"
@@ -28,7 +29,7 @@
             <View
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_weight="1"/>
+                android:layout_weight="1" />
 
             <Button
                 android:id="@+id/logout"
@@ -45,56 +46,100 @@
             android:layout_gravity="center"
             android:layout_marginTop="24dp"
             android:layout_marginBottom="24dp"
+            android:contentDescription="TODO"
             android:src="@drawable/profile_picture_placeholder" />
 
-        <TextView
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            android:layout_marginBottom="0dp"
-            android:text="Email" />
-        <TextView
-            android:id="@+id/userEmail"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="0dp"
-            android:textSize="20sp"
-            android:text="User Email" />
+            android:paddingTop="15dp"
+            android:paddingBottom="0dp">
 
-<!--        <EditText-->
-<!--            android:id="@+id/editTextEmail"-->
+            <TextView
+                android:id="@+id/textEmailLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Email"
+                android:layout_alignParentStart="true"/>
+
+            <TextView
+                android:id="@+id/userEmail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/textEmailLabel"
+                android:layout_alignParentStart="true"
+                android:text="User Email"
+                android:textSize="20sp" />
+
+            <ImageView
+                android:id="@+id/editEmailButton"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_alignTop="@id/textEmailLabel"
+                android:layout_marginStart="243dp"
+                android:layout_marginTop="8dp"
+                android:layout_toEndOf="@id/userEmail"
+                android:contentDescription="edit_email"
+                android:src="@drawable/ic_edit" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="15dp"
+            android:paddingBottom="0dp">
+
+            <TextView
+                android:id="@+id/textPasswordLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Password"
+                android:layout_alignParentStart="true"/>
+
+            <TextView
+                android:id="@+id/textPassword"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/textPasswordLabel"
+                android:layout_alignParentStart="true"
+                android:text="***************"
+                android:textSize="20sp" />
+
+            <ImageView
+                android:id="@+id/editPasswordButton"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_alignTop="@id/textPasswordLabel"
+                android:layout_marginStart="209dp"
+                android:layout_marginTop="2dp"
+                android:layout_toEndOf="@id/textPassword"
+                android:contentDescription="edit_password"
+                android:src="@drawable/ic_edit" />
+        </RelativeLayout>
+
+
+        <!--        <TextView-->
 <!--            android:layout_width="match_parent"-->
 <!--            android:layout_height="wrap_content"-->
-<!--            android:hint="User Email" />-->
+<!--            android:layout_marginTop="15dp"-->
+<!--            android:layout_marginBottom="0dp"-->
+<!--            android:text="Password" />-->
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            android:layout_marginBottom="0dp"
-            android:text="Password" />
-
-<!--        <EditText-->
-<!--            android:id="@+id/editTextFullName"-->
+<!--        <TextView-->
+<!--            android:id="@+id/Password"-->
 <!--            android:layout_width="match_parent"-->
 <!--            android:layout_height="wrap_content"-->
-<!--            android:hint="**********" />-->
-        <TextView
-            android:id="@+id/Password"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="0dp"
-            android:textSize="20sp"
-            android:text="***************" />
+<!--            android:layout_marginTop="5dp"-->
+<!--            android:layout_marginBottom="0dp"-->
+<!--            android:text="***************"-->
+<!--            android:textSize="20sp" />-->
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
             android:layout_marginBottom="16dp"
             android:text="App Integrations" />
-
 
 
         <LinearLayout
@@ -114,18 +159,18 @@
             <View
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_weight="1"/>
+                android:layout_weight="1" />
 
             <Button
                 android:id="@+id/buttonConnected"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|end"
                 android:background="@drawable/connected_button_background"
                 android:paddingHorizontal="16dp"
                 android:paddingVertical="8dp"
                 android:text="Connected"
-                android:textColor="#FFFFFF"
-                android:layout_gravity="center_vertical|end" />
+                android:textColor="#FFFFFF" />
         </LinearLayout>
 
         <LinearLayout
@@ -145,18 +190,18 @@
             <View
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_weight="1"/>
+                android:layout_weight="1" />
 
             <Button
                 android:id="@+id/buttonConnectedApple"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|end"
                 android:background="@drawable/connected_button_background"
                 android:paddingHorizontal="16dp"
                 android:paddingVertical="8dp"
                 android:text="Connected"
-                android:textColor="#FFFFFF"
-                android:layout_gravity="center_vertical|end" />
+                android:textColor="#FFFFFF" />
         </LinearLayout>
 
 
