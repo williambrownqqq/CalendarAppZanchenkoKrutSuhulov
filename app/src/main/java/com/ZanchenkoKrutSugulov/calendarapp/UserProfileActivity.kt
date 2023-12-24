@@ -10,6 +10,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import com.ZanchenkoKrutSugulov.calendarapp.dataClasses.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -24,11 +25,12 @@ class UserProfileActivity : AppCompatActivity() {
     private var currentUser: FirebaseUser? = null
 
     private lateinit var editUserEmail: EditText
-    private lateinit var editEmailButton: ImageView
+    private lateinit var editEmailButton: Button
     private lateinit var textPassword: TextView
     private lateinit var editPassword: EditText
-    private lateinit var editPasswordButton: ImageView
-
+    private lateinit var editPasswordButton: Button
+    private lateinit var saveEmailButton: Button
+    private lateinit var savePasswordButton: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,7 +45,18 @@ class UserProfileActivity : AppCompatActivity() {
         textPassword = findViewById(R.id.textPassword)
         editPassword = findViewById(R.id.editPassword)
         editPasswordButton = findViewById(R.id.editPasswordButton)
+        saveEmailButton = findViewById(R.id.saveEmailButton)
+        savePasswordButton = findViewById(R.id.savePasswordButton)
 
+        saveEmailButton.setOnClickListener {
+            val newEmail = editUserEmail.text.toString()
+            updateEmail(newEmail)
+        }
+
+        savePasswordButton.setOnClickListener {
+            val newPassword = editPassword.text.toString()
+            updatePassword(newPassword)
+        }
 
         loadUserProfile()
         buttonLogout.setOnClickListener {
@@ -94,4 +107,41 @@ class UserProfileActivity : AppCompatActivity() {
             textView.visibility = View.GONE
         }
     }
+
+    private fun updateEmail(newEmail: String) {
+        currentUser?.let { user ->
+            user.verifyBeforeUpdateEmail(newEmail)
+                .addOnCompleteListener { verificationTask ->
+                    if (verificationTask.isSuccessful) {
+                        Log.d("UserProfileActivity", "Verification email sent to $newEmail")
+                        Toast.makeText(this, "Check your email to verify the new address", Toast.LENGTH_LONG).show()
+
+                        editUserEmail.visibility = View.GONE
+                        userEmailView.visibility = View.VISIBLE
+                    } else {
+                        Log.w("UserProfileActivity", "Error sending verification email.", verificationTask.exception)
+                        Toast.makeText(this, "Error sending verification email.", Toast.LENGTH_SHORT).show()
+                    }
+                }
+        }
+    }
+
+
+    private fun updatePassword(newPassword: String) {
+        currentUser?.let { user ->
+            user.updatePassword(newPassword).addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    Log.d("UserProfileActivity", "Password updated.")
+                    // Сбросьте отображение пароля
+                    textPassword.text = newPassword.map { '*' }.joinToString("")
+                    editPassword.visibility = View.GONE
+                    textPassword.visibility = View.VISIBLE
+                } else {
+                    Log.w("UserProfileActivity", "Error updating password.", task.exception)
+                    Toast.makeText(this, "Error updating password.", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
 }
