@@ -72,6 +72,14 @@
                 android:layout_marginTop="0dp"
                 android:text="User Email"
                 android:textSize="20sp" />
+            <EditText
+                android:id="@+id/editUserEmail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/textEmailLabel"
+                android:layout_alignParentStart="true"
+                android:textSize="20sp"
+                android:visibility="gone" />
 
             <ImageView
                 android:id="@+id/editEmailButton"
@@ -107,7 +115,15 @@
                 android:layout_alignParentStart="true"
                 android:text="***************"
                 android:textSize="20sp" />
-
+            <EditText
+                android:id="@+id/editPassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/textPasswordLabel"
+                android:layout_alignParentStart="true"
+                android:textSize="20sp"
+                android:visibility="gone"
+                android:inputType="textPassword" />
             <ImageView
                 android:id="@+id/editPasswordButton"
                 android:layout_width="30dp"
