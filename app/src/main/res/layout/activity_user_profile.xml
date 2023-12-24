@@ -24,7 +24,7 @@
                 android:layout_width="34dp"
                 android:layout_height="wrap_content"
                 android:contentDescription="arrow-back-user-profile"
-                android:src="@drawable/ic_arrow_back" />
+                android:src="@drawable/ic_back_arrow" />
 
             <View
                 android:layout_width="0dp"
@@ -68,6 +68,8 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/textEmailLabel"
                 android:layout_alignParentStart="true"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="0dp"
                 android:text="User Email"
                 android:textSize="20sp" />
 
@@ -76,8 +78,8 @@
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:layout_alignTop="@id/textEmailLabel"
-                android:layout_marginStart="243dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginStart="112dp"
+                android:layout_marginTop="7dp"
                 android:layout_toEndOf="@id/userEmail"
                 android:contentDescription="edit_email"
                 android:src="@drawable/ic_edit" />
@@ -169,6 +171,7 @@
                 android:background="@drawable/connected_button_background"
                 android:paddingHorizontal="16dp"
                 android:paddingVertical="8dp"
+                android:textSize="25px"
                 android:text="Connected"
                 android:textColor="#FFFFFF" />
         </LinearLayout>
@@ -200,6 +203,7 @@
                 android:background="@drawable/connected_button_background"
                 android:paddingHorizontal="16dp"
                 android:paddingVertical="8dp"
+                android:textSize="25px"
                 android:text="Connected"
                 android:textColor="#FFFFFF" />
         </LinearLayout>
