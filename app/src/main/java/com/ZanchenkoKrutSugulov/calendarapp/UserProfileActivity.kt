@@ -2,6 +2,7 @@ package com.ZanchenkoKrutSugulov.calendarapp
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -11,12 +12,13 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import com.ZanchenkoKrutSugulov.calendarapp.dataClasses.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 
-
+@RequiresApi(Build.VERSION_CODES.O)
 class UserProfileActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
     private lateinit var buttonLogout: Button
@@ -83,6 +85,7 @@ class UserProfileActivity : AppCompatActivity() {
 
 
     }
+
 
     private fun startLoginActivity() {
         startActivity(Intent(this, Login::class.java))
