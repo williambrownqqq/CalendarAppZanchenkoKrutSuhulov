@@ -4,25 +4,19 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.View
-import android.widget.Button
-import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 import android.widget.AdapterView
 import android.widget.AdapterView.OnItemSelectedListener
 import android.widget.ArrayAdapter
+import android.widget.Button
 import android.widget.Spinner
+import android.widget.TextView
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.firebase.firestore.FirebaseFirestore
-import com.ZanchenkoKrutSugulov.calendarapp.dataClasses.User
-import com.ZanchenkoKrutSugulov.calendarapp.viewModels.activities.mainActivity.MainActivityViewModelFactory
 import com.ZanchenkoKrutSugulov.calendarapp.activities.DateActivity
 import com.ZanchenkoKrutSugulov.calendarapp.dataClasses.CalendarDay
 import com.ZanchenkoKrutSugulov.calendarapp.dataClasses.db.DateEvent
@@ -32,6 +26,9 @@ import com.ZanchenkoKrutSugulov.calendarapp.utils.getMonthsArray
 import com.ZanchenkoKrutSugulov.calendarapp.utils.getYearsArray
 import com.ZanchenkoKrutSugulov.calendarapp.utils.localDateToEpochSecond
 import com.ZanchenkoKrutSugulov.calendarapp.viewModels.activities.mainActivity.MainActivityViewModel
+import com.ZanchenkoKrutSugulov.calendarapp.viewModels.activities.mainActivity.MainActivityViewModelFactory
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -63,13 +60,6 @@ class MainActivity : AppCompatActivity() {
         setupSpinners()
 
 
-    }
-
-
-
-    override fun onStart() {
-        super.onStart()
-        getMonthEvents()
     }
 
     private fun setupActivityViewModel() {

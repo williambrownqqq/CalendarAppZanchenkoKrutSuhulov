@@ -29,7 +29,7 @@ fun getYearsArray(): Array<Int> {
 }
 
 fun getMonthsArray(): Array<String> {
-    return arrayOf("Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro")
+    return arrayOf("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December")
 }
 
 fun getHourArray(): Array<Int> {
