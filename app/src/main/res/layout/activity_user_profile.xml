@@ -83,21 +83,21 @@
 
         </RelativeLayout>
 
-        <Button
-            android:id="@+id/editEmailButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/editUserEmail"
-            android:layout_alignParentEnd="true"
-            android:text="Edit" />
+<!--        <Button-->
+<!--            android:id="@+id/editEmailButton"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_below="@id/editUserEmail"-->
+<!--            android:layout_alignParentEnd="true"-->
+<!--            android:text="Edit" />-->
 
-        <Button
-            android:id="@+id/saveEmailButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/editUserEmail"
-            android:layout_alignParentEnd="true"
-            android:text="Save" />
+<!--        <Button-->
+<!--            android:id="@+id/saveEmailButton"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_below="@id/editUserEmail"-->
+<!--            android:layout_alignParentEnd="true"-->
+<!--            android:text="Save" />-->
 <!--      Password ******************************************************************************-->
         <RelativeLayout
             android:layout_width="match_parent"
@@ -130,21 +130,21 @@
                 android:visibility="gone"
                 android:inputType="textPassword" />
         </RelativeLayout>
-        <Button
-            android:id="@+id/editPasswordButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/editPassword"
-            android:layout_alignParentEnd="true"
-            android:text="Edit" />
+<!--        <Button-->
+<!--            android:id="@+id/editPasswordButton"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_below="@id/editPassword"-->
+<!--            android:layout_alignParentEnd="true"-->
+<!--            android:text="Edit" />-->
 
-        <Button
-            android:id="@+id/savePasswordButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/editPassword"
-            android:layout_alignParentEnd="true"
-            android:text="Save" />
+<!--        <Button-->
+<!--            android:id="@+id/savePasswordButton"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_below="@id/editPassword"-->
+<!--            android:layout_alignParentEnd="true"-->
+<!--            android:text="Save" />-->
 
 
 <!--      App Integrations **********************************************************************-->
