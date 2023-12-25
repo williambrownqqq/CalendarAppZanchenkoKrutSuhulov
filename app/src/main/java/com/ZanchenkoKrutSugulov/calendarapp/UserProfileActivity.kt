@@ -76,6 +76,12 @@ class UserProfileActivity : AppCompatActivity() {
         editPasswordButton.setOnClickListener {
             toggleEditing(textPassword, editPassword)
         }
+
+
+
+
+
+
     }
 
     private fun startLoginActivity() {
@@ -132,7 +138,7 @@ class UserProfileActivity : AppCompatActivity() {
             user.updatePassword(newPassword).addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     Log.d("UserProfileActivity", "Password updated.")
-                    // Сбросьте отображение пароля
+
                     textPassword.text = newPassword.map { '*' }.joinToString("")
                     editPassword.visibility = View.GONE
                     textPassword.visibility = View.VISIBLE
@@ -143,5 +149,4 @@ class UserProfileActivity : AppCompatActivity() {
             }
         }
     }
-
 }
