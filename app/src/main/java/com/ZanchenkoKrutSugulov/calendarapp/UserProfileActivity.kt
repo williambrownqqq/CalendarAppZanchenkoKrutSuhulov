@@ -40,13 +40,13 @@ class UserProfileActivity : AppCompatActivity() {
         backButton = findViewById(R.id.backFromUserProfile)
         userEmailView = findViewById(R.id.userEmail)
         currentUser = auth.currentUser
-        editUserEmail = findViewById(R.id.editUserEmail)
-        editEmailButton = findViewById(R.id.editEmailButton)
+//        editUserEmail = findViewById(R.id.editUserEmail)
+//        editEmailButton = findViewById(R.id.editEmailButton)
         textPassword = findViewById(R.id.textPassword)
         editPassword = findViewById(R.id.editPassword)
-        editPasswordButton = findViewById(R.id.editPasswordButton)
-        saveEmailButton = findViewById(R.id.saveEmailButton)
-        savePasswordButton = findViewById(R.id.savePasswordButton)
+//        editPasswordButton = findViewById(R.id.editPasswordButton)
+//        saveEmailButton = findViewById(R.id.saveEmailButton)
+//        savePasswordButton = findViewById(R.id.savePasswordButton)
 
         saveEmailButton.setOnClickListener {
             val newEmail = editUserEmail.text.toString()
