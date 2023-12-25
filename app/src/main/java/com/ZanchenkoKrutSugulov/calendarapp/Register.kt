@@ -9,13 +9,15 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.ZanchenkoKrutSugulov.calendarapp.utils.createUserDB
+import com.ZanchenkoKrutSugulov.calendarapp.utils.isValidEmail
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
 
 
-class Register: AppCompatActivity() {
+class Register : AppCompatActivity() {
     private var editTextEmail: TextInputEditText? = null
-    private var editTextPassword:TextInputEditText? = null
+    private var editTextPassword: TextInputEditText? = null
     private var buttonReg: Button? = null
     private var mAuth: FirebaseAuth? = null
     private var progressBar: ProgressBar? = null
@@ -30,6 +32,7 @@ class Register: AppCompatActivity() {
             finish()
         }
     }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,11 +49,6 @@ class Register: AppCompatActivity() {
             finish()
         })
 
-    fun isValidEmail(email: String): Boolean {
-        val regex = Regex("[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}")
-        return regex.matches(email)
-    }
-
         buttonReg!!.setOnClickListener OnClickListener@{
             progressBar!!.visibility = View.VISIBLE
             val email: String = editTextEmail!!.text.toString().trim()
@@ -62,7 +60,7 @@ class Register: AppCompatActivity() {
             }
 
             if (password.length < 6) {
-                Toast.makeText(this@Register, "Password must be at least 6 characters long", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@Register,"Password must be at least 6 characters long", Toast.LENGTH_SHORT).show()
                 return@OnClickListener
             }
 
@@ -72,22 +70,20 @@ class Register: AppCompatActivity() {
                 .addOnCompleteListener { task ->
                     progressBar!!.visibility = View.GONE
                     if (task.isSuccessful) {
-                        Toast.makeText(
-                            this@Register, "Account created.",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                        val intent = Intent(applicationContext, Login::class.java)
-                        startActivity(intent)
+                        val user = mAuth!!.currentUser
+                        createUserDB(user)
+                        Toast.makeText(this@Register, "Account created.", Toast.LENGTH_SHORT).show()
+                        startActivity(Intent(applicationContext, Login::class.java))
                         finish()
                     } else {
-                        val exception = task.exception
-                        val message = exception?.message ?: "Authentication failed!"
-                        Toast.makeText(this@Register, message, Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            this@Register,
+                            task.exception?.message ?: "Authentication failed!",
+                            Toast.LENGTH_SHORT
+                        ).show()
                         Log.d("RegisterActivity", "Authentication failed!", task.exception)
                     }
                 }
         }
-
-
     }
 }
