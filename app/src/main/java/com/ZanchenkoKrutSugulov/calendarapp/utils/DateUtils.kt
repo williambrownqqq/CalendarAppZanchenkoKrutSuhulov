@@ -28,6 +28,10 @@ fun getYearsArray(): Array<Int> {
     return (2000..2150).toList().toTypedArray()
 }
 
+fun getDaysOfWeekArray(): Array<String> {
+    return arrayOf("Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sabado")
+}
+
 fun getMonthsArray(): Array<String> {
     return arrayOf("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December")
 }
