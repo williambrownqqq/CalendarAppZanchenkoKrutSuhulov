@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "508784181273",
+    "firebase_url": "https://calendar-ef023-default-rtdb.europe-west1.firebasedatabase.app",
     "project_id": "calendar-ef023",
     "storage_bucket": "calendar-ef023.appspot.com"
   },
@@ -13,6 +14,14 @@
         }
       },
       "oauth_client": [
+        {
+          "client_id": "508784181273-0j3e7o485eo16covq06ru2r6gkj1booo.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ZanchenkoKrutSugulov.calendarapp",
+            "certificate_hash": "60f6a7638be656e3ef26b6ee343254021798dec8"
+          }
+        },
         {
           "client_id": "508784181273-3l4do7pkonptaf04e42regfh9f46v85p.apps.googleusercontent.com",
           "client_type": 1,

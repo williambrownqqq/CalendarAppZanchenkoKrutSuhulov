@@ -155,7 +155,7 @@
                 android:paddingHorizontal="16dp"
                 android:paddingVertical="8dp"
                 android:textSize="25px"
-                android:text="not Connected"
+                android:text="Not Connected"
                 android:textColor="#FFFFFF" />
         </LinearLayout>
 
@@ -187,7 +187,7 @@
                 android:paddingHorizontal="16dp"
                 android:paddingVertical="8dp"
                 android:textSize="25px"
-                android:text="Connected"
+                android:text="Not Connected"
                 android:textColor="#FFFFFF" />
         </LinearLayout>
 
