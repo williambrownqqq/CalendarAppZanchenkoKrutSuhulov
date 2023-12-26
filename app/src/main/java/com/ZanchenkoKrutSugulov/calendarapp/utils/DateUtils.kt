@@ -32,6 +32,9 @@ fun getMonthsArray(): Array<String> {
     return arrayOf("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December")
 }
 
+fun getDaysArray(): Array<String> {
+    return arrayOf("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday")
+}
 fun getHourArray(): Array<Int> {
     return (0..24).toList().toTypedArray()
 }
