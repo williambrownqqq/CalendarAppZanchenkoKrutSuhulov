@@ -40,28 +40,17 @@
 
 
         <activity android:name=".activities.CreateEventActivity"
-            android:exported="true"
-            >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-            </intent-filter>
+            android:exported="false">
         </activity>
 
         <activity android:name=".activities.EditEventActivity"
-            android:exported="true"
-            >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-            </intent-filter>
+            android:exported="false">
         </activity>
 
 
         <activity android:name=".activities.DateActivity"
-            android:exported="true"
-            >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-            </intent-filter>
+            android:exported="false"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
         </activity>
     </application>
 

@@ -64,6 +64,11 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    override fun onStart() {
+        super.onStart()
+        getMonthEvents()
+    }
+
     private fun setupActivityViewModel() {
         val factory = MainActivityViewModelFactory(application, this)
         activityViewModel = ViewModelProvider(
@@ -150,7 +155,6 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    @SuppressLint("SetTextI18n")
     private fun setupEventView(dateEvents: List<DateEvent>) {
         val eventRecyclerView = findViewById<RecyclerView>(R.id.rvEvents)
         eventRecyclerView.layoutManager = LinearLayoutManager(this)
@@ -164,9 +168,9 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun calendarDayClick(calendarDay: CalendarDay) {
+        Log.d("MainActivity", "calendarDayClick!!!!")
         val intent = Intent(this@MainActivity, DateActivity::class.java)
         intent.putExtra("date", localDateToEpochSecond(calendarDay.date))
-        Log.d("MainActivity", "INTENT! ${intent}\n ${calendarDay.date}\n${localDateToEpochSecond(calendarDay.date)}")
         startActivity(intent)
     }
 

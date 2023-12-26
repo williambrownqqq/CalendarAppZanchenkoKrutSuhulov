@@ -29,9 +29,9 @@ class MainActivityViewModel(private val application: Application, private val ac
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun getMonthEvents() {
-        Log.d("test", currentDate.toString())
+        Log.d("teste", currentDate.toString())
         monthEvents = dateEventViewModel.getMonthEvents(currentDate)
-        Log.d("test", monthEvents.value.toString())
+        Log.d("teste", monthEvents.value.toString())
     }
 
     private fun setupDateEventViewModel() {
