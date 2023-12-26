@@ -39,7 +39,7 @@
 
 
         <activity android:name=".activities.CreateEventActivity"
-            android:exported="true"
+            android:exported="false"
             >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -47,7 +47,7 @@
         </activity>
 
         <activity android:name=".activities.EditEventActivity"
-            android:exported="true"
+            android:exported="false"
             >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
