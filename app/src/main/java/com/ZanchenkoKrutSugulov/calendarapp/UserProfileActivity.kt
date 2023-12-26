@@ -28,7 +28,6 @@ import com.google.firebase.firestore.FirebaseFirestore
 import android.app.Activity
 
 
-
 @RequiresApi(Build.VERSION_CODES.O)
 class UserProfileActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
@@ -60,6 +59,7 @@ class UserProfileActivity : AppCompatActivity() {
         buttonConnectGoogle = findViewById(R.id.buttonConnectGoogle)
 
         loadUserProfile()
+
         buttonLogout.setOnClickListener {
             auth.signOut()
             startLoginActivity()
@@ -97,7 +97,11 @@ class UserProfileActivity : AppCompatActivity() {
         if (task.isSuccessful) {
             val account: GoogleSignInAccount? = task.result
             if (account != null) {
-                Toast.makeText(this, "Success! ${account.displayName.toString()}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    this,
+                    "Success! ${account.displayName.toString()}",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         } else {
             Toast.makeText(this, task.exception.toString(), Toast.LENGTH_SHORT).show()
@@ -197,7 +201,6 @@ class UserProfileActivity : AppCompatActivity() {
     ) {
         val userProfileChangeRequest = UserProfileChangeRequest.Builder()
             .setDisplayName(googleAccount.displayName)
-            .setPhotoUri(googleAccount.photoUrl)
             .build()
 
         firebaseUser?.updateProfile(userProfileChangeRequest)?.addOnCompleteListener { task ->
@@ -208,10 +211,9 @@ class UserProfileActivity : AppCompatActivity() {
             }
         }
 
-        // Опционально: Обновление пользовательских данных в вашей Firestore или Realtime Database
         val db = FirebaseFirestore.getInstance()
         val userRef = db.collection("users").document(firebaseUser!!.uid)
-        Log.d("UserProfileActivity", userRef.toString())
+
         userRef.update("googleAccountId", googleAccount.id)
             .addOnSuccessListener {
                 Log.d("UserProfileActivity", "Google account ID added to Firestore user document.")

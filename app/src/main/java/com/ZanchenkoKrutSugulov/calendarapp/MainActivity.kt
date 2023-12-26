@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.AdapterView.OnItemSelectedListener
@@ -11,6 +12,7 @@ import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.Spinner
 import android.widget.TextView
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
@@ -164,6 +166,7 @@ class MainActivity : AppCompatActivity() {
     private fun calendarDayClick(calendarDay: CalendarDay) {
         val intent = Intent(this@MainActivity, DateActivity::class.java)
         intent.putExtra("date", localDateToEpochSecond(calendarDay.date))
+        Log.d("MainActivity", "INTENT! ${intent}\n ${calendarDay.date}\n${localDateToEpochSecond(calendarDay.date)}")
         startActivity(intent)
     }
 
