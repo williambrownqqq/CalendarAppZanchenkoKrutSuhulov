@@ -5,6 +5,7 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
@@ -26,6 +27,8 @@ class DateActivity: AppCompatActivity() {
     private lateinit var date: ZonedDateTime
     private lateinit var dateActivityViewModel: DateActivityViewModel
 
+    private lateinit var backButton: ImageView
+
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,6 +39,14 @@ class DateActivity: AppCompatActivity() {
 
         setupButtons()
         setupTextViews()
+
+
+        backButton = findViewById(R.id.backFromEventsDateList)
+
+        backButton.setOnClickListener {
+            finish()
+        }
+
     }
 
     @RequiresApi(Build.VERSION_CODES.O)

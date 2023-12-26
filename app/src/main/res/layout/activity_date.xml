@@ -7,6 +7,13 @@
     android:orientation="vertical"
     android:padding="10dp">
 
+    <ImageView
+        android:id="@+id/backFromEventsDateList"
+        android:layout_width="34dp"
+        android:layout_height="wrap_content"
+        android:contentDescription="arrow-back-user-profile"
+        android:src="@drawable/ic_back_arrow" />
+
     <TextView
         android:id="@+id/tvDate"
         android:layout_width="match_parent"
