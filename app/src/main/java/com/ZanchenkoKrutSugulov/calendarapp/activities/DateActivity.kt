@@ -80,6 +80,7 @@ class DateActivity: AppCompatActivity() {
             setupEventView(dateEvents)
         }
     }
+
     @RequiresApi(Build.VERSION_CODES.O)
     private fun setupEventView(dateEvents: List<DateEvent>?) {
         if (dateEvents == null) return;

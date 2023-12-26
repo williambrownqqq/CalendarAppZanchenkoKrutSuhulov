@@ -8,8 +8,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.ZanchenkoKrutSugulov.calendarapp.database.dao.DateEventDatabase
 import com.ZanchenkoKrutSugulov.calendarapp.dataClasses.db.DateEvent
+import com.ZanchenkoKrutSugulov.calendarapp.database.dao.DateEventDatabase
 import com.ZanchenkoKrutSugulov.calendarapp.viewModels.dateEvent.DateEventViewModel
 import com.ZanchenkoKrutSugulov.calendarapp.viewModels.dateEvent.DateEventViewModelFactory
 import java.time.ZonedDateTime
@@ -29,9 +29,9 @@ class MainActivityViewModel(private val application: Application, private val ac
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun getMonthEvents() {
-        Log.d("teste", currentDate.toString())
+        Log.d("test", currentDate.toString())
         monthEvents = dateEventViewModel.getMonthEvents(currentDate)
-        Log.d("teste", monthEvents.value.toString())
+        Log.d("test", monthEvents.value.toString())
     }
 
     private fun setupDateEventViewModel() {
