@@ -147,7 +147,7 @@
                 android:layout_weight="1" />
 
             <Button
-                android:id="@+id/buttonConnected"
+                android:id="@+id/buttonConnectGoogle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical|end"
@@ -155,7 +155,7 @@
                 android:paddingHorizontal="16dp"
                 android:paddingVertical="8dp"
                 android:textSize="25px"
-                android:text="Connected"
+                android:text="not Connected"
                 android:textColor="#FFFFFF" />
         </LinearLayout>
 
