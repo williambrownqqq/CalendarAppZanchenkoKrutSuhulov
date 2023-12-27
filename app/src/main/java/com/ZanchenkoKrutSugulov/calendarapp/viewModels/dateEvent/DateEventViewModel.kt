@@ -22,12 +22,12 @@ class DateEventViewModel(private val dateEventDao: DateEventDao): ViewModel() {
 
     fun deleteDateEvent(dateEvent: DateEvent) = viewModelScope.launch {
         dateEventDao.deleteDateEvent(dateEvent)
-        deleteDateEventFromFirebase(dateEvent.id)
+        deleteDateEventFromFirebase(dateEvent.id.toString())
     }
 
     fun updateDateEvent(dateEvent:DateEvent) = viewModelScope.launch {
         dateEventDao.updateDateEvent(dateEvent)
-        updateDateEventInFirebase(dateEvent.id, dateEvent)
+        updateDateEventInFirebase(dateEvent.id.toString(), dateEvent)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)

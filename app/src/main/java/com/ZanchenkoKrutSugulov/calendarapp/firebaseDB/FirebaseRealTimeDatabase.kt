@@ -14,16 +14,14 @@ object FirebaseRealTimeDatabase {
         reference.child(eventId).setValue(dateEvent)
     }
 
-    fun updateDateEventInFirebase(eventId: Int, updatedDateEvent: DateEvent) {
-        val stringEventId = eventId.toString()
+    fun updateDateEventInFirebase(eventId: String, updatedDateEvent: DateEvent) {
         // Update the DateEvent using its ID/key
-        reference.child(stringEventId).setValue(updatedDateEvent)
+        reference.child(eventId).setValue(updatedDateEvent)
     }
 
-    fun deleteDateEventFromFirebase(eventId: Int) {
-        val stringEventId = eventId.toString()
+    fun deleteDateEventFromFirebase(eventId: String) {
         // Remove the DateEvent using its ID/key
-        reference.child(stringEventId).removeValue()
+        reference.child(eventId).removeValue()
     }
 
     // Get all DateEvents
