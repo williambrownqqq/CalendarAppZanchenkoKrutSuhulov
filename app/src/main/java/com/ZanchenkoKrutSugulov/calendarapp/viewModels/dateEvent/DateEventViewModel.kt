@@ -7,20 +7,27 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ZanchenkoKrutSugulov.calendarapp.dataClasses.db.DateEvent
 import com.ZanchenkoKrutSugulov.calendarapp.database.dao.DateEventDao
+import com.ZanchenkoKrutSugulov.calendarapp.firebaseDB.FirebaseRealTimeDatabase.deleteDateEventFromFirebase
+import com.ZanchenkoKrutSugulov.calendarapp.firebaseDB.FirebaseRealTimeDatabase.saveDateEventToFirebase
+import com.ZanchenkoKrutSugulov.calendarapp.firebaseDB.FirebaseRealTimeDatabase.updateDateEventInFirebase
 import kotlinx.coroutines.launch
 import java.time.ZonedDateTime
 
 class DateEventViewModel(private val dateEventDao: DateEventDao): ViewModel() {
+
     fun insertDateEvent(dateEvent: DateEvent) = viewModelScope.launch {
         dateEventDao.insertDateEvent(dateEvent)
+        saveDateEventToFirebase(dateEvent)
     }
 
     fun deleteDateEvent(dateEvent: DateEvent) = viewModelScope.launch {
         dateEventDao.deleteDateEvent(dateEvent)
+        deleteDateEventFromFirebase(dateEvent.id)
     }
 
     fun updateDateEvent(dateEvent:DateEvent) = viewModelScope.launch {
         dateEventDao.updateDateEvent(dateEvent)
+        updateDateEventInFirebase(dateEvent.id, dateEvent)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
