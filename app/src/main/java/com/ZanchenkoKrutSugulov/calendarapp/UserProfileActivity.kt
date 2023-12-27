@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
@@ -18,12 +17,9 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.auth.GoogleAuthProvider
-import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.firestore.FirebaseFirestore
 import android.app.Activity
 
@@ -42,8 +38,6 @@ class UserProfileActivity : AppCompatActivity() {
     private lateinit var buttonConnectGoogle: Button
 
     private lateinit var googleSignInClient: GoogleSignInClient
-    private val GOOGLE_SIGN_IN = 100
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -111,116 +105,6 @@ class UserProfileActivity : AppCompatActivity() {
     private fun startLoginActivity() {
         startActivity(Intent(this, Login::class.java))
         finish()
-    }
-
-
-    //    @Deprecated("Deprecated in Java")
-//    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-//        super.onActivityResult(requestCode, resultCode, data)
-//
-//        if (requestCode == GOOGLE_SIGN_IN) {
-//            val completedTask = GoogleSignIn.getSignedInAccountFromIntent(data)
-//            val account = completedTask.getResult(ApiException::class.java)
-//            val credential = GoogleAuthProvider.getCredential(account.idToken, null)
-//            Log.d("UserProfileActivity", "Google Credentials: $credential")
-//            currentUser?.linkWithCredential(credential)
-//                ?.addOnCompleteListener(this) { task ->
-//                    if (task.isSuccessful) {
-//                        Log.d("UserProfileActivity", "linkWithCredential:success")
-//                        val firebaseUser = task.result?.user
-//                        updateFirebaseUserProfile(firebaseUser, account)
-//                    } else {
-//                        Log.w("UserProfileActivity", "linkWithCredential:failure", task.exception)
-//                        Toast.makeText(this, "Authentication failed.", Toast.LENGTH_SHORT).show()
-//                    }
-//                }
-//        }
-//    }
-////    private fun handleSignInResult(completedTask: Task<GoogleSignInAccount>) {
-//////        try {
-////            val account = completedTask.getResult(ApiException::class.java)
-////            val credential = GoogleAuthProvider.getCredential(account.idToken, null)
-////            Log.d("UserProfileActivity", "Google Credentials: $credential")
-////            currentUser?.linkWithCredential(credential)
-////                ?.addOnCompleteListener(this) { task ->
-////                    if (task.isSuccessful) {
-////                        Log.d("UserProfileActivity", "linkWithCredential:success")
-////                        val firebaseUser = task.result?.user
-////                        updateFirebaseUserProfile(firebaseUser, account)
-////                    } else {
-////                        Log.w("UserProfileActivity", "linkWithCredential:failure", task.exception)
-////                        Toast.makeText(this, "Authentication failed.", Toast.LENGTH_SHORT).show()
-////                    }
-////                }
-//////        } catch (e: ApiException) {
-//////            Log.w("UserProfileActivity", "signInResult:failed code=${e.statusCode}")
-//////        }
-////    }
-//
-//
-////    private fun handleSignInResult(result: Task<GoogleSignInAccount>) {
-////        try {
-////            val account = result.getResult(ApiException::class.java)
-////            firebaseAuthWithGoogle(account)
-////        } catch (e: ApiException) {
-////            Log.w("SignInActivity", "Google sign in failed", e)
-////        }
-////    }
-//
-//    private fun firebaseAuthWithGoogle(acct: GoogleSignInAccount) {
-//        val credential = GoogleAuthProvider.getCredential(acct.idToken, null)
-//        auth.signInWithCredential(credential).addOnCompleteListener(this) { task ->
-//            if (task.isSuccessful) {
-//                val user = auth.currentUser
-//                updateFirebaseUserProfile(user, acct)
-//            } else {
-//                Log.w("SignInActivity", "Firebase authentication with Google failed", task.exception)
-//            }
-//        }
-//    }
-//
-//
-//    private fun linkGoogleAccount(account: GoogleSignInAccount) {
-//        val credential = GoogleAuthProvider.getCredential(account.idToken, null)
-//        Log.d("UserProfileActivity", "Google Credentials: " + credential.toString())
-//        currentUser?.linkWithCredential(credential)
-//            ?.addOnCompleteListener(this) { task ->
-//                if (task.isSuccessful) {
-//                    Log.d("UserProfileActivity", "linkWithCredential:success")
-//                    val firebaseUser = task.result?.user
-//                    updateFirebaseUserProfile(firebaseUser, account)
-//                } else {
-//                    Log.w("UserProfileActivity", "linkWithCredential:failure", task.exception)
-//                    Toast.makeText(this, "Authentication failed.", Toast.LENGTH_SHORT).show()
-//                }
-//            }
-//    }
-    private fun updateFirebaseUserProfile(
-        firebaseUser: FirebaseUser?,
-        googleAccount: GoogleSignInAccount
-    ) {
-        val userProfileChangeRequest = UserProfileChangeRequest.Builder()
-            .setDisplayName(googleAccount.displayName)
-            .build()
-
-        firebaseUser?.updateProfile(userProfileChangeRequest)?.addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                Log.d("UserProfileActivity", "User profile updated with Google account info.")
-            } else {
-                Log.w("UserProfileActivity", "Error updating Firebase user profile", task.exception)
-            }
-        }
-
-        val db = FirebaseFirestore.getInstance()
-        val userRef = db.collection("users").document(firebaseUser!!.uid)
-
-        userRef.update("googleAccountId", googleAccount.id)
-            .addOnSuccessListener {
-                Log.d("UserProfileActivity", "Google account ID added to Firestore user document.")
-            }
-            .addOnFailureListener { e ->
-                Log.w("UserProfileActivity", "Error adding Google account ID to Firestore", e)
-            }
     }
 
     private fun loadUserProfile() {
