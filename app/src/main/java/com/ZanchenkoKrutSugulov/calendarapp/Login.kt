@@ -25,6 +25,9 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.android.gms.common.api.Scope
+import com.google.api.services.calendar.CalendarScopes
+
 
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -99,15 +102,18 @@ class Login : AppCompatActivity() {
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(getString(R.string.default_web_client_id))
             .requestEmail()
+            .requestScopes(Scope(CalendarScopes.CALENDAR))
             .build()
 
         googleSignInClient = GoogleSignIn.getClient(this, gso)
         googleSignInClient.signOut()
     }
+
     private fun signInWithGoogle() {
         val signInIntent = googleSignInClient.signInIntent
         startActivityForResult(signInIntent, RC_SIGN_IN)
     }
+
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -121,40 +127,78 @@ class Login : AppCompatActivity() {
             }
         }
     }
+
     private fun firebaseAuthWithGoogle(idToken: String) {
         val credential = GoogleAuthProvider.getCredential(idToken, null)
         mAuth!!.signInWithCredential(credential)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
-                    Toast.makeText(applicationContext, "firebaseAuthWithGoogle", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(applicationContext, "firebaseAuthWithGoogle", Toast.LENGTH_SHORT)
+                        .show()
                     startMainActivity()
-//                    checkIfUserExists(task.result?.user)
+                    Log.d("Login", "!DATABASE USER CHECK ${task.result?.user?.uid}")
+                    updateUserAfterGoogleRegister(task.result?.user)
                 } else {
-                    Toast.makeText(applicationContext, "#ERROR firebaseAuthWithGoogle", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        applicationContext,
+                        "#ERROR firebaseAuthWithGoogle",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
     }
 
-    private fun checkIfUserExists(firebaseUser: FirebaseUser?) {
-        if (!::database.isInitialized) {
-            database = FirebaseDatabase.getInstance().getReference("users")
-        }
-        Log.d("Login", "!DATABASE ${database.toString()}")
-        firebaseUser?.let { user ->
-            Log.d("Login", "!DATABASE USER ${user.uid}")
-            database.child(user.uid).get().addOnSuccessListener {
-                Log.d("Login", "!DATABASE USER IT ${it.toString()}")
-                if (!it.exists()) {
-                    Log.d("Login", "User does not exist. Creating new user in database.")
-                    createUserInDatabase(user)
-                } else {
-                    Toast.makeText(applicationContext, "User already exists in database.", Toast.LENGTH_SHORT).show()
-                }
-                startMainActivity()
-            }.addOnFailureListener {
-                Toast.makeText(applicationContext, "Failed to check user existence: ${it.message}", Toast.LENGTH_SHORT).show()
-            }
-        }
+//    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+//        super.onActivityResult(requestCode, resultCode, data)
+//        if (requestCode == RC_SIGN_IN) {
+//            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
+//            try {
+//                val account = task.getResult(ApiException::class.java)
+//                firebaseAuthWithGoogle(account.idToken!!, account.id)
+//            } catch (e: ApiException) {
+//                // Обработка ошибки
+//            }
+//        }
+//    }
+//
+//    private fun firebaseAuthWithGoogle(idToken: String, googleAccountId: String?) {
+//        val credential = GoogleAuthProvider.getCredential(idToken, null)
+//        mAuth!!.signInWithCredential(credential)
+//            .addOnCompleteListener(this) { task ->
+//                if (task.isSuccessful) {
+//                    Toast.makeText(applicationContext, "firebaseAuthWithGoogle", Toast.LENGTH_SHORT)
+//                        .show()
+//                    startMainActivity()
+//                    Log.d("Login", "Google Account ID: $googleAccountId")
+//                    updateUserAfterGoogleRegister(task.result?.user, googleAccountId)
+//                } else {
+//                    Toast.makeText(
+//                        applicationContext,
+//                        "#ERROR firebaseAuthWithGoogle",
+//                        Toast.LENGTH_SHORT
+//                    ).show()
+//                }
+//            }
+//    }
+
+    private fun updateUserAfterGoogleRegister(firebaseUser: FirebaseUser?) {
+        val db = FirebaseFirestore.getInstance()
+        val userRef = db.collection("users").document(firebaseUser!!.uid)
+
+//
+//        val userUpdates = hashMapOf<String, Any>(
+//            "googleAccountId" to googleAccount.id,
+//            "anotherField" to "newValue",
+//            "thirdField" to 12345
+//        )
+//
+//        userRef.update(userUpdates)
+//            .addOnSuccessListener {
+//                Log.d("UserProfileActivity", "Multiple fields added/updated in Firestore user document.")
+//            }
+//            .addOnFailureListener { e ->
+//                Log.w("UserProfileActivity", "Error updating Firestore document", e)
+//            }
     }
 
     private fun createUserInDatabase(firebaseUser: FirebaseUser) {
@@ -166,9 +210,14 @@ class Login : AppCompatActivity() {
 
         database.child(firebaseUser.uid).setValue(user).addOnCompleteListener { task ->
             if (task.isSuccessful) {
-                Toast.makeText(applicationContext, "User created in database", Toast.LENGTH_SHORT).show()
+                Toast.makeText(applicationContext, "User created in database", Toast.LENGTH_SHORT)
+                    .show()
             } else {
-                Toast.makeText(applicationContext, "Failed to create user in database: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    applicationContext,
+                    "Failed to create user in database: ${task.exception?.message}",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
     }
