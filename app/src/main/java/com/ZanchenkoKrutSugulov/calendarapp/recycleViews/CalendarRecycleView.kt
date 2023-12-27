@@ -42,7 +42,7 @@ class CalendarRecycleViewAdapter(
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: CalendarRecycleViewHolder, position: Int) {
-        val daysWeek = arrayOf("Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sabado")
+        val daysWeek =  arrayOf("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday")
 
         if (position in 0..6) {
             holder.bindDayOfWeek(daysWeek[position])

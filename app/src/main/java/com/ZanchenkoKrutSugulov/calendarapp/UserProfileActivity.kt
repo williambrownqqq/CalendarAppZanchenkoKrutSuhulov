@@ -1,8 +1,7 @@
 package com.ZanchenkoKrutSugulov.calendarapp
 
-import android.annotation.SuppressLint
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -11,12 +10,25 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
 import com.ZanchenkoKrutSugulov.calendarapp.dataClasses.User
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.firestore.FirebaseFirestore
+import android.app.Activity
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 class UserProfileActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
     private lateinit var buttonLogout: Button
@@ -25,12 +37,13 @@ class UserProfileActivity : AppCompatActivity() {
     private var currentUser: FirebaseUser? = null
 
     private lateinit var editUserEmail: EditText
-    private lateinit var editEmailButton: Button
     private lateinit var textPassword: TextView
     private lateinit var editPassword: EditText
-    private lateinit var editPasswordButton: Button
-    private lateinit var saveEmailButton: Button
-    private lateinit var savePasswordButton: Button
+    private lateinit var buttonConnectGoogle: Button
+
+    private lateinit var googleSignInClient: GoogleSignInClient
+    private val GOOGLE_SIGN_IN = 100
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,24 +54,12 @@ class UserProfileActivity : AppCompatActivity() {
         userEmailView = findViewById(R.id.userEmail)
         currentUser = auth.currentUser
         editUserEmail = findViewById(R.id.editUserEmail)
-        editEmailButton = findViewById(R.id.editEmailButton)
         textPassword = findViewById(R.id.textPassword)
         editPassword = findViewById(R.id.editPassword)
-        editPasswordButton = findViewById(R.id.editPasswordButton)
-        saveEmailButton = findViewById(R.id.saveEmailButton)
-        savePasswordButton = findViewById(R.id.savePasswordButton)
-
-        saveEmailButton.setOnClickListener {
-            val newEmail = editUserEmail.text.toString()
-            updateEmail(newEmail)
-        }
-
-        savePasswordButton.setOnClickListener {
-            val newPassword = editPassword.text.toString()
-            updatePassword(newPassword)
-        }
+        buttonConnectGoogle = findViewById(R.id.buttonConnectGoogle)
 
         loadUserProfile()
+
         buttonLogout.setOnClickListener {
             auth.signOut()
             startLoginActivity()
@@ -69,24 +70,157 @@ class UserProfileActivity : AppCompatActivity() {
         }
 
 
-        editEmailButton.setOnClickListener {
-            toggleEditing(userEmailView, editUserEmail)
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestEmail()
+            .requestIdToken(getString(R.string.default_web_client_id))
+            .requestEmail()
+            .build()
+
+        googleSignInClient = GoogleSignIn.getClient(this, gso)
+
+        buttonConnectGoogle.setOnClickListener {
+            val signInIntent = googleSignInClient.signInIntent
+            launcher.launch(signInIntent)
+        }
+    }
+
+    private val launcher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+
+                val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+                handleResults(task)
+            }
         }
 
-        editPasswordButton.setOnClickListener {
-            toggleEditing(textPassword, editPassword)
+    private fun handleResults(task: Task<GoogleSignInAccount>) {
+        if (task.isSuccessful) {
+            val account: GoogleSignInAccount? = task.result
+            if (account != null) {
+                Toast.makeText(
+                    this,
+                    "Success! ${account.displayName.toString()}",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        } else {
+            Toast.makeText(this, task.exception.toString(), Toast.LENGTH_SHORT).show()
         }
-
-
-
-
-
-
     }
 
     private fun startLoginActivity() {
         startActivity(Intent(this, Login::class.java))
         finish()
+    }
+
+
+    //    @Deprecated("Deprecated in Java")
+//    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+//        super.onActivityResult(requestCode, resultCode, data)
+//
+//        if (requestCode == GOOGLE_SIGN_IN) {
+//            val completedTask = GoogleSignIn.getSignedInAccountFromIntent(data)
+//            val account = completedTask.getResult(ApiException::class.java)
+//            val credential = GoogleAuthProvider.getCredential(account.idToken, null)
+//            Log.d("UserProfileActivity", "Google Credentials: $credential")
+//            currentUser?.linkWithCredential(credential)
+//                ?.addOnCompleteListener(this) { task ->
+//                    if (task.isSuccessful) {
+//                        Log.d("UserProfileActivity", "linkWithCredential:success")
+//                        val firebaseUser = task.result?.user
+//                        updateFirebaseUserProfile(firebaseUser, account)
+//                    } else {
+//                        Log.w("UserProfileActivity", "linkWithCredential:failure", task.exception)
+//                        Toast.makeText(this, "Authentication failed.", Toast.LENGTH_SHORT).show()
+//                    }
+//                }
+//        }
+//    }
+////    private fun handleSignInResult(completedTask: Task<GoogleSignInAccount>) {
+//////        try {
+////            val account = completedTask.getResult(ApiException::class.java)
+////            val credential = GoogleAuthProvider.getCredential(account.idToken, null)
+////            Log.d("UserProfileActivity", "Google Credentials: $credential")
+////            currentUser?.linkWithCredential(credential)
+////                ?.addOnCompleteListener(this) { task ->
+////                    if (task.isSuccessful) {
+////                        Log.d("UserProfileActivity", "linkWithCredential:success")
+////                        val firebaseUser = task.result?.user
+////                        updateFirebaseUserProfile(firebaseUser, account)
+////                    } else {
+////                        Log.w("UserProfileActivity", "linkWithCredential:failure", task.exception)
+////                        Toast.makeText(this, "Authentication failed.", Toast.LENGTH_SHORT).show()
+////                    }
+////                }
+//////        } catch (e: ApiException) {
+//////            Log.w("UserProfileActivity", "signInResult:failed code=${e.statusCode}")
+//////        }
+////    }
+//
+//
+////    private fun handleSignInResult(result: Task<GoogleSignInAccount>) {
+////        try {
+////            val account = result.getResult(ApiException::class.java)
+////            firebaseAuthWithGoogle(account)
+////        } catch (e: ApiException) {
+////            Log.w("SignInActivity", "Google sign in failed", e)
+////        }
+////    }
+//
+//    private fun firebaseAuthWithGoogle(acct: GoogleSignInAccount) {
+//        val credential = GoogleAuthProvider.getCredential(acct.idToken, null)
+//        auth.signInWithCredential(credential).addOnCompleteListener(this) { task ->
+//            if (task.isSuccessful) {
+//                val user = auth.currentUser
+//                updateFirebaseUserProfile(user, acct)
+//            } else {
+//                Log.w("SignInActivity", "Firebase authentication with Google failed", task.exception)
+//            }
+//        }
+//    }
+//
+//
+//    private fun linkGoogleAccount(account: GoogleSignInAccount) {
+//        val credential = GoogleAuthProvider.getCredential(account.idToken, null)
+//        Log.d("UserProfileActivity", "Google Credentials: " + credential.toString())
+//        currentUser?.linkWithCredential(credential)
+//            ?.addOnCompleteListener(this) { task ->
+//                if (task.isSuccessful) {
+//                    Log.d("UserProfileActivity", "linkWithCredential:success")
+//                    val firebaseUser = task.result?.user
+//                    updateFirebaseUserProfile(firebaseUser, account)
+//                } else {
+//                    Log.w("UserProfileActivity", "linkWithCredential:failure", task.exception)
+//                    Toast.makeText(this, "Authentication failed.", Toast.LENGTH_SHORT).show()
+//                }
+//            }
+//    }
+    private fun updateFirebaseUserProfile(
+        firebaseUser: FirebaseUser?,
+        googleAccount: GoogleSignInAccount
+    ) {
+        val userProfileChangeRequest = UserProfileChangeRequest.Builder()
+            .setDisplayName(googleAccount.displayName)
+            .build()
+
+        firebaseUser?.updateProfile(userProfileChangeRequest)?.addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                Log.d("UserProfileActivity", "User profile updated with Google account info.")
+            } else {
+                Log.w("UserProfileActivity", "Error updating Firebase user profile", task.exception)
+            }
+        }
+
+        val db = FirebaseFirestore.getInstance()
+        val userRef = db.collection("users").document(firebaseUser!!.uid)
+
+        userRef.update("googleAccountId", googleAccount.id)
+            .addOnSuccessListener {
+                Log.d("UserProfileActivity", "Google account ID added to Firestore user document.")
+            }
+            .addOnFailureListener { e ->
+                Log.w("UserProfileActivity", "Error adding Google account ID to Firestore", e)
+            }
     }
 
     private fun loadUserProfile() {
@@ -99,54 +233,6 @@ class UserProfileActivity : AppCompatActivity() {
             userEmailView.text = userProfile?.email
         }.addOnFailureListener { exception ->
             Log.w("UserProfileActivity", "Error getting user details: ", exception)
-        }
-    }
-
-    private fun toggleEditing(textView: TextView, editText: EditText) {
-        if (editText.visibility == View.VISIBLE) {
-            textView.text = editText.text
-            textView.visibility = View.VISIBLE
-            editText.visibility = View.GONE
-        } else {
-            editText.setText(textView.text)
-            editText.visibility = View.VISIBLE
-            textView.visibility = View.GONE
-        }
-    }
-
-    private fun updateEmail(newEmail: String) {
-        currentUser?.let { user ->
-            user.verifyBeforeUpdateEmail(newEmail)
-                .addOnCompleteListener { verificationTask ->
-                    if (verificationTask.isSuccessful) {
-                        Log.d("UserProfileActivity", "Verification email sent to $newEmail")
-                        Toast.makeText(this, "Check your email to verify the new address", Toast.LENGTH_LONG).show()
-
-                        editUserEmail.visibility = View.GONE
-                        userEmailView.visibility = View.VISIBLE
-                    } else {
-                        Log.w("UserProfileActivity", "Error sending verification email.", verificationTask.exception)
-                        Toast.makeText(this, "Error sending verification email.", Toast.LENGTH_SHORT).show()
-                    }
-                }
-        }
-    }
-
-
-    private fun updatePassword(newPassword: String) {
-        currentUser?.let { user ->
-            user.updatePassword(newPassword).addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    Log.d("UserProfileActivity", "Password updated.")
-
-                    textPassword.text = newPassword.map { '*' }.joinToString("")
-                    editPassword.visibility = View.GONE
-                    textPassword.visibility = View.VISIBLE
-                } else {
-                    Log.w("UserProfileActivity", "Error updating password.", task.exception)
-                    Toast.makeText(this, "Error updating password.", Toast.LENGTH_SHORT).show()
-                }
-            }
         }
     }
 }

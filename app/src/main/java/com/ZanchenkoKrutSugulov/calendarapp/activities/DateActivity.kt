@@ -3,7 +3,9 @@ package com.ZanchenkoKrutSugulov.calendarapp.activities
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
@@ -15,6 +17,7 @@ import com.ZanchenkoKrutSugulov.calendarapp.dataClasses.db.DateEvent
 import com.ZanchenkoKrutSugulov.calendarapp.recycleViews.EventsRecycleViewAdapter
 import com.ZanchenkoKrutSugulov.calendarapp.utils.epochSecondToLocalDate
 import com.ZanchenkoKrutSugulov.calendarapp.utils.getMonthsArray
+import com.ZanchenkoKrutSugulov.calendarapp.utils.getDaysOfWeekArray
 import com.ZanchenkoKrutSugulov.calendarapp.utils.localDateToEpochSecond
 import com.ZanchenkoKrutSugulov.calendarapp.viewModels.activities.dateActivity.DateActivityViewModel
 import com.ZanchenkoKrutSugulov.calendarapp.viewModels.activities.dateActivity.DateActivityViewModelFactory
@@ -23,6 +26,8 @@ import java.time.ZonedDateTime
 class DateActivity: AppCompatActivity() {
     private lateinit var date: ZonedDateTime
     private lateinit var dateActivityViewModel: DateActivityViewModel
+
+    private lateinit var backButton: ImageView
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,6 +39,14 @@ class DateActivity: AppCompatActivity() {
 
         setupButtons()
         setupTextViews()
+
+
+        backButton = findViewById(R.id.backFromEventsDateList)
+
+        backButton.setOnClickListener {
+            finish()
+        }
+
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -44,6 +57,7 @@ class DateActivity: AppCompatActivity() {
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun getIntentExtras() {
+        Log.d("DateActivity", "${intent.toString()}")
         if (intent == null) return;
         val epochSecond = intent.getLongExtra("date", 0)
 
@@ -61,8 +75,9 @@ class DateActivity: AppCompatActivity() {
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun setupTextViews() {
+        val currentDay = getDaysOfWeekArray()[date.dayOfWeek.value - 1]
         val dateText = findViewById<TextView>(R.id.tvDate)
-        dateText.text = "${date.dayOfMonth} de ${getMonthsArray()[date.monthValue - 1]} de ${date.year}"
+        dateText.text = "${currentDay}, ${date.dayOfMonth} de ${getMonthsArray()[date.monthValue - 1]} de ${date.year}"
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
