@@ -16,8 +16,8 @@ import com.ZanchenkoKrutSugulov.calendarapp.R
 import com.ZanchenkoKrutSugulov.calendarapp.dataClasses.db.DateEvent
 import com.ZanchenkoKrutSugulov.calendarapp.recycleViews.EventsRecycleViewAdapter
 import com.ZanchenkoKrutSugulov.calendarapp.utils.epochSecondToLocalDate
-import com.ZanchenkoKrutSugulov.calendarapp.utils.getMonthsArray
 import com.ZanchenkoKrutSugulov.calendarapp.utils.getDaysOfWeekArray
+import com.ZanchenkoKrutSugulov.calendarapp.utils.getMonthsArray
 import com.ZanchenkoKrutSugulov.calendarapp.utils.localDateToEpochSecond
 import com.ZanchenkoKrutSugulov.calendarapp.viewModels.activities.dateActivity.DateActivityViewModel
 import com.ZanchenkoKrutSugulov.calendarapp.viewModels.activities.dateActivity.DateActivityViewModelFactory
@@ -77,7 +77,7 @@ class DateActivity: AppCompatActivity() {
     private fun setupTextViews() {
         val currentDay = getDaysOfWeekArray()[date.dayOfWeek.value - 1]
         val dateText = findViewById<TextView>(R.id.tvDate)
-        dateText.text = "${currentDay}, ${date.dayOfMonth} de ${getMonthsArray()[date.monthValue - 1]} de ${date.year}"
+        dateText.text = "${currentDay}, ${date.dayOfMonth} of ${getMonthsArray()[date.monthValue - 1]} ${date.year}"
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
