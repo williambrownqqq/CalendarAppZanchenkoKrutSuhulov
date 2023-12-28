@@ -121,6 +121,7 @@ class Login : AppCompatActivity() {
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
             try {
                 val account = task.getResult(ApiException::class.java)!!
+                Log.d("Login", "!GOOGLE ACC ID ${account.id}")
                 firebaseAuthWithGoogle(account.idToken!!)
             } catch (e: ApiException) {
                 Toast.makeText(this, "#ERROR onActivityResult", Toast.LENGTH_SHORT).show()
@@ -148,51 +149,18 @@ class Login : AppCompatActivity() {
             }
     }
 
-//    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-//        super.onActivityResult(requestCode, resultCode, data)
-//        if (requestCode == RC_SIGN_IN) {
-//            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
-//            try {
-//                val account = task.getResult(ApiException::class.java)
-//                firebaseAuthWithGoogle(account.idToken!!, account.id)
-//            } catch (e: ApiException) {
-//                // Обработка ошибки
-//            }
-//        }
-//    }
-//
-//    private fun firebaseAuthWithGoogle(idToken: String, googleAccountId: String?) {
-//        val credential = GoogleAuthProvider.getCredential(idToken, null)
-//        mAuth!!.signInWithCredential(credential)
-//            .addOnCompleteListener(this) { task ->
-//                if (task.isSuccessful) {
-//                    Toast.makeText(applicationContext, "firebaseAuthWithGoogle", Toast.LENGTH_SHORT)
-//                        .show()
-//                    startMainActivity()
-//                    Log.d("Login", "Google Account ID: $googleAccountId")
-//                    updateUserAfterGoogleRegister(task.result?.user, googleAccountId)
-//                } else {
-//                    Toast.makeText(
-//                        applicationContext,
-//                        "#ERROR firebaseAuthWithGoogle",
-//                        Toast.LENGTH_SHORT
-//                    ).show()
-//                }
-//            }
-//    }
-
     private fun updateUserAfterGoogleRegister(firebaseUser: FirebaseUser?) {
         val db = FirebaseFirestore.getInstance()
         val userRef = db.collection("users").document(firebaseUser!!.uid)
 
-//
+
 //        val userUpdates = hashMapOf<String, Any>(
 //            "googleAccountId" to googleAccount.id,
 //            "anotherField" to "newValue",
 //            "thirdField" to 12345
 //        )
 //
-//        userRef.update(userUpdates)
+//        userRef.update(userUpdates as Map<String, Any>)
 //            .addOnSuccessListener {
 //                Log.d("UserProfileActivity", "Multiple fields added/updated in Firestore user document.")
 //            }
