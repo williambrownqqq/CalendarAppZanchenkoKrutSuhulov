@@ -10,7 +10,7 @@ import com.google.firebase.database.ValueEventListener
 class CalendarDatabase : CalendarDao {
     private val database = FirebaseDatabase.getInstance()
     private val collection = database.getReference("calendars")
-
+    private val collectionEvents = database.getReference("date_events")
 
     override fun createCalendar(calendar: Calendar) {
         collection.child(calendar.calendarId).setValue(calendar)
@@ -22,10 +22,34 @@ class CalendarDatabase : CalendarDao {
 
     override fun deleteCalendar(calendarId: String) {
         collection.child(calendarId).removeValue()
+        deleteAllCalendarEvents(calendarId)
     }
 
     override fun getCalendars(userId: String, callback: (List<Calendar>) -> Unit) {
-        TODO("Not yet implemented")
+        collection.orderByChild("userId").equalTo(userId)
+            .addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val calendars =
+                        snapshot.children.mapNotNull { it.getValue(Calendar::class.java) }
+                    callback(calendars)
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    Log.e("FirebaseCalendarDao", "Error fetching calendars: ${error.message}")
+                }
+            })
     }
 
+    private fun deleteAllCalendarEvents(calendarId: String) {
+        collectionEvents.orderByChild("calendarId").equalTo(calendarId)
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    snapshot.children.forEach { it.ref.removeValue() }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    Log.e("FirebaseCalendarDao", "Error deleting events: ${error.message}")
+                }
+            })
+    }
 }
