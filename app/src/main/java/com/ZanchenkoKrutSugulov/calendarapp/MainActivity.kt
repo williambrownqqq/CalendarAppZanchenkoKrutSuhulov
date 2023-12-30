@@ -10,6 +10,7 @@ import android.widget.AdapterView
 import android.widget.AdapterView.OnItemSelectedListener
 import android.widget.ArrayAdapter
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
@@ -36,7 +37,7 @@ import com.google.firebase.auth.FirebaseUser
 @RequiresApi(Build.VERSION_CODES.O)
 class MainActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
-    private lateinit var buttonShowProfile: Button
+    private lateinit var buttonShowProfile: ImageButton
     private var currentUser: FirebaseUser? = null
     private lateinit var activityViewModel: MainActivityViewModel
 
