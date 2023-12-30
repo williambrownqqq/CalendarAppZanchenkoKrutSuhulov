@@ -91,15 +91,10 @@ class UserProfileActivity : AppCompatActivity() {
         googleSignInClient.signOut()
     }
     private fun checkGoogleAccountConnected() {
-        if (isGoogleAccountConnected()) {
-            buttonConnectGoogle.text = "Not Connected"
-        } else {
-            buttonConnectGoogle.text = "Connected"
-        }
+        buttonConnectGoogle.text = if (isGoogleAccountConnected()) "Connected" else "Not Connected"
     }
 
     private fun isGoogleAccountConnected(): Boolean {
-        Log.d("UserProfileActivity", "!CHECK CURRENT USER: ${currentUser.toString()}")
         return currentUser?.providerId == GoogleAuthProvider.PROVIDER_ID
     }
 
