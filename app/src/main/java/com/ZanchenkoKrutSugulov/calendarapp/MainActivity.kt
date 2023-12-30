@@ -54,6 +54,7 @@ class MainActivity : AppCompatActivity() {
         buttonShowProfile.setOnClickListener {
             startActivity(Intent(this, UserProfileActivity::class.java))
         }
+
         if (currentUser == null) {
             startActivity(Intent(this, Login::class.java))
             finish()
@@ -61,7 +62,6 @@ class MainActivity : AppCompatActivity() {
 
         setupActivityViewModel()
         setupSpinners()
-
 
     }
 
@@ -164,12 +164,23 @@ class MainActivity : AppCompatActivity() {
         }
 
         val monthEventsTextView = findViewById<TextView>(R.id.tvMonthEvents)
+
+        updateRecyclerViewHeight(eventRecyclerView, dateEvents)
+
         monthEventsTextView.text = "Events of months (${dateEvents.size})"
     }
 
+    private fun updateRecyclerViewHeight(recyclerView: RecyclerView, dateEvents: List<DateEvent>) {
+        val itemCountToShow = if (dateEvents.size <= 3) dateEvents.size else 3
+
+
+        val scale = recyclerView.resources.displayMetrics.density
+        Log.d("MainActivity", "!EVENTS VIEW ITEMS: $itemCountToShow\nscale: $scale\nheight: ${(90 * itemCountToShow * scale).toInt()}")
+        recyclerView.layoutParams.height = (90 * itemCountToShow * scale * 2).toInt()
+        recyclerView.requestLayout()
+    }
 
     private fun calendarDayClick(calendarDay: CalendarDay) {
-        Log.d("MainActivity", "calendarDayClick!!!!")
         val intent = Intent(this@MainActivity, DateActivity::class.java)
         intent.putExtra("date", localDateToEpochSecond(calendarDay.date))
         startActivity(intent)
