@@ -1,5 +1,6 @@
 package com.ZanchenkoKrutSugulov.calendarapp
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -15,6 +16,7 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.ZanchenkoKrutSugulov.calendarapp.dataClasses.User
 import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
@@ -23,7 +25,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.android.gms.common.api.Scope
 import com.google.api.services.calendar.CalendarScopes
@@ -51,7 +52,7 @@ class Login : AppCompatActivity() {
         setContentView(R.layout.activity_login)
 
         mAuth = FirebaseAuth.getInstance()
-        editTextEmail = findViewById(R.id.email);
+        editTextEmail = findViewById(R.id.email)
         editTextPassword = findViewById(R.id.password)
         buttonLogin = findViewById(R.id.btn_login)
         progressBar = findViewById(R.id.progressBar)
@@ -114,6 +115,7 @@ class Login : AppCompatActivity() {
         startActivityForResult(signInIntent, RC_SIGN_IN)
     }
 
+    @SuppressLint("SuspiciousIndentation")
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -121,24 +123,22 @@ class Login : AppCompatActivity() {
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
             try {
                 val account = task.getResult(ApiException::class.java)!!
-                Log.d("Login", "!GOOGLE ACC ID ${account.id}")
-                firebaseAuthWithGoogle(account.idToken!!)
+                firebaseAuthWithGoogle(account)
             } catch (e: ApiException) {
                 Toast.makeText(this, "#ERROR onActivityResult", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
-    private fun firebaseAuthWithGoogle(idToken: String) {
-        val credential = GoogleAuthProvider.getCredential(idToken, null)
+    private fun firebaseAuthWithGoogle(account: GoogleSignInAccount) {
+        val credential = GoogleAuthProvider.getCredential(account.idToken!!, null)
         mAuth!!.signInWithCredential(credential)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     Toast.makeText(applicationContext, "firebaseAuthWithGoogle", Toast.LENGTH_SHORT)
                         .show()
                     startMainActivity()
-                    Log.d("Login", "!DATABASE USER CHECK ${task.result?.user?.uid}")
-                    updateUserAfterGoogleRegister(task.result?.user)
+                    updateUserAfterGoogleRegister(task.result?.user, account)
                 } else {
                     Toast.makeText(
                         applicationContext,
@@ -149,24 +149,22 @@ class Login : AppCompatActivity() {
             }
     }
 
-    private fun updateUserAfterGoogleRegister(firebaseUser: FirebaseUser?) {
+    private fun updateUserAfterGoogleRegister(firebaseUser: FirebaseUser?, account: GoogleSignInAccount?) {
         val db = FirebaseFirestore.getInstance()
-        val userRef = db.collection("users").document(firebaseUser!!.uid)
+        val user = db.collection("users").document(firebaseUser!!.uid)
 
+        val userUpdates = hashMapOf<String, Any>(
+            "googleAccountId" to (account?.id ?: ""),
+            "email" to (account?.email ?: "")
+        )
 
-//        val userUpdates = hashMapOf<String, Any>(
-//            "googleAccountId" to googleAccount.id,
-//            "anotherField" to "newValue",
-//            "thirdField" to 12345
-//        )
-//
-//        userRef.update(userUpdates as Map<String, Any>)
-//            .addOnSuccessListener {
-//                Log.d("UserProfileActivity", "Multiple fields added/updated in Firestore user document.")
-//            }
-//            .addOnFailureListener { e ->
-//                Log.w("UserProfileActivity", "Error updating Firestore document", e)
-//            }
+        user.update(userUpdates as Map<String, Any>)
+            .addOnSuccessListener {
+                Log.d("UserProfileActivity", "User updated in db")
+            }
+            .addOnFailureListener { e ->
+                Log.w("UserProfileActivity", "Error updating user in db! ", e)
+            }
     }
 
     private fun createUserInDatabase(firebaseUser: FirebaseUser) {
