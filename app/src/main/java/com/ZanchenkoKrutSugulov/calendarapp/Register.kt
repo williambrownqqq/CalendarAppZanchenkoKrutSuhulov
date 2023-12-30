@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
@@ -83,6 +84,12 @@ class Register : AppCompatActivity() {
 
             Log.d("RegisterActivity", "FirebaseAuth instance: $mAuth")
             registerUserWithEmail(email, password)
+        }
+
+        configureGoogleSignIn()
+
+        findViewById<ImageView>(R.id.loginWithGoogle).setOnClickListener {
+            signInWithGoogle()
         }
     }
 
