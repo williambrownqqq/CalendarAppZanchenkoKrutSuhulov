@@ -57,7 +57,7 @@ class EventsRecycleViewHolder(private val view: View): RecyclerView.ViewHolder(v
         dateTextView.text = "${dateEvent.day}/${dateEvent.month}/${dateEvent.year}"
         if (dateEvent.description != null) descTextView.text = dateEvent.description
         if (dateEvent.hour != null && dateEvent.minute != null) {
-            timeTextView.text = "Às ${dateEvent.hour}:${dateEvent.minute}"
+            timeTextView.text = "Time: ${dateEvent.hour}:${dateEvent.minute}"
         }
 
         editButton.setOnClickListener {
