@@ -5,7 +5,6 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.text.TextUtils
-import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.ImageView
@@ -14,7 +13,6 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import com.ZanchenkoKrutSugulov.calendarapp.dataClasses.User
 import com.ZanchenkoKrutSugulov.calendarapp.utils.updateUserAfterGoogleRegister
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -23,10 +21,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.database.DatabaseReference
-import com.google.firebase.firestore.FirebaseFirestore
 import com.google.android.gms.common.api.Scope
 import com.google.api.services.calendar.CalendarScopes
 
@@ -41,8 +37,7 @@ class Login : AppCompatActivity() {
     private var progressBar: ProgressBar? = null
     private var textView: TextView? = null
 
-    lateinit var googleSignInClient: GoogleSignInClient
-    private lateinit var database: DatabaseReference
+    private lateinit var googleSignInClient: GoogleSignInClient
 
     companion object {
         private const val RC_SIGN_IN = 9001
@@ -75,22 +70,7 @@ class Login : AppCompatActivity() {
                 Toast.makeText(this@Login, "Enter password", Toast.LENGTH_SHORT).show()
                 return@OnClickListener
             }
-            mAuth!!.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener { task ->
-                    progressBar!!.visibility = View.GONE
-                    if (task.isSuccessful) {
-                        Toast.makeText(applicationContext, "Login Successful", Toast.LENGTH_SHORT)
-                            .show()
-                        val intent = Intent(applicationContext, MainActivity::class.java)
-                        startActivity(intent)
-                        finish()
-                    } else {
-                        Toast.makeText(
-                            this@Login, "Authentication failed.",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                }
+            loginWithEmail(email, password)
         })
 
         configureGoogleSignIn()
@@ -98,6 +78,25 @@ class Login : AppCompatActivity() {
         findViewById<ImageView>(R.id.loginWithGoogle).setOnClickListener {
             signInWithGoogle()
         }
+    }
+
+    private fun loginWithEmail(email: String, password: String) {
+        mAuth!!.signInWithEmailAndPassword(email, password)
+            .addOnCompleteListener { task ->
+                progressBar!!.visibility = View.GONE
+                if (task.isSuccessful) {
+                    Toast.makeText(applicationContext, "Login Successful", Toast.LENGTH_SHORT)
+                        .show()
+                    val intent = Intent(applicationContext, MainActivity::class.java)
+                    startActivity(intent)
+                    finish()
+                } else {
+                    Toast.makeText(
+                        this@Login, "Authentication failed.",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
     }
 
     private fun configureGoogleSignIn() {
