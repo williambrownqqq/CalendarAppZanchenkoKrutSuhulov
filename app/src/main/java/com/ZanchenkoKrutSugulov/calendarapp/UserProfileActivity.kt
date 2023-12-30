@@ -22,6 +22,9 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import android.app.Activity
+import com.google.android.gms.common.api.Scope
+import com.google.api.services.calendar.CalendarScopes
+import com.google.firebase.auth.GoogleAuthProvider
 
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -64,19 +67,42 @@ class UserProfileActivity : AppCompatActivity() {
         }
 
 
+        checkGoogleAccountConnected()
+        configureGoogleSignIn()
+
+
+        buttonConnectGoogle.setOnClickListener {
+            if (isGoogleAccountConnected()) {
+                Toast.makeText(this, "Google account already connected.", Toast.LENGTH_SHORT).show()
+            } else {
+                val signInIntent = googleSignInClient.signInIntent
+                launcher.launch(signInIntent)
+            }
+        }
+    }
+    private fun configureGoogleSignIn() {
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestEmail()
             .requestIdToken(getString(R.string.default_web_client_id))
             .requestEmail()
+            .requestScopes(Scope(CalendarScopes.CALENDAR))
             .build()
 
         googleSignInClient = GoogleSignIn.getClient(this, gso)
-
-        buttonConnectGoogle.setOnClickListener {
-            val signInIntent = googleSignInClient.signInIntent
-            launcher.launch(signInIntent)
+        googleSignInClient.signOut()
+    }
+    private fun checkGoogleAccountConnected() {
+        if (isGoogleAccountConnected()) {
+            buttonConnectGoogle.text = "Not Connected"
+        } else {
+            buttonConnectGoogle.text = "Connected"
         }
     }
+
+    private fun isGoogleAccountConnected(): Boolean {
+        Log.d("UserProfileActivity", "!CHECK CURRENT USER: ${currentUser.toString()}")
+        return currentUser?.providerId == GoogleAuthProvider.PROVIDER_ID
+    }
+
 
     private val launcher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->

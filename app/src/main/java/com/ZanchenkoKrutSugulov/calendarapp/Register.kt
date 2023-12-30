@@ -149,7 +149,7 @@ class Register : AppCompatActivity() {
         mAuth!!.signInWithCredential(credential)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
-                    Toast.makeText(applicationContext, "firebaseAuthWithGoogle", Toast.LENGTH_SHORT)
+                    Toast.makeText(applicationContext, "Register with Google", Toast.LENGTH_SHORT)
                         .show()
                     startMainActivity()
                     updateUserAfterGoogleRegister(task.result?.user, account)
