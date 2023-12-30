@@ -15,6 +15,7 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.ZanchenkoKrutSugulov.calendarapp.dataClasses.User
+import com.ZanchenkoKrutSugulov.calendarapp.utils.updateUserAfterGoogleRegister
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -129,7 +130,6 @@ class Login : AppCompatActivity() {
             }
         }
     }
-
     private fun firebaseAuthWithGoogle(account: GoogleSignInAccount) {
         val credential = GoogleAuthProvider.getCredential(account.idToken!!, null)
         mAuth!!.signInWithCredential(credential)
@@ -149,49 +149,9 @@ class Login : AppCompatActivity() {
             }
     }
 
-    private fun updateUserAfterGoogleRegister(firebaseUser: FirebaseUser?, account: GoogleSignInAccount?) {
-        val db = FirebaseFirestore.getInstance()
-        val user = db.collection("users").document(firebaseUser!!.uid)
-
-        val userUpdates = hashMapOf<String, Any>(
-            "googleAccountId" to (account?.id ?: ""),
-            "email" to (account?.email ?: "")
-        )
-
-        user.update(userUpdates as Map<String, Any>)
-            .addOnSuccessListener {
-                Log.d("UserProfileActivity", "User updated in db")
-            }
-            .addOnFailureListener { e ->
-                Log.w("UserProfileActivity", "Error updating user in db! ", e)
-            }
-    }
-
-    private fun createUserInDatabase(firebaseUser: FirebaseUser) {
-        val user = User(
-            uid = firebaseUser.uid,
-            email = firebaseUser.email
-            // Добавьте другие поля, если требуется
-        )
-
-        database.child(firebaseUser.uid).setValue(user).addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                Toast.makeText(applicationContext, "User created in database", Toast.LENGTH_SHORT)
-                    .show()
-            } else {
-                Toast.makeText(
-                    applicationContext,
-                    "Failed to create user in database: ${task.exception?.message}",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-        }
-    }
-
     private fun startMainActivity() {
         val intent = Intent(applicationContext, MainActivity::class.java)
         startActivity(intent)
         finish()
     }
-
 }
