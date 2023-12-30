@@ -7,7 +7,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 
-class CalendarDatabase : CalendarDao {
+object CalendarDatabase : CalendarDao {
     private val database = FirebaseDatabase.getInstance()
     private val collection = database.getReference("calendars")
     private val collectionEvents = database.getReference("date_events")

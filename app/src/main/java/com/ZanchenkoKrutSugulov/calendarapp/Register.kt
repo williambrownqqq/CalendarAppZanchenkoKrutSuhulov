@@ -13,6 +13,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import com.ZanchenkoKrutSugulov.calendarapp.utils.createPrimaryCalendarForNewUser
 import com.ZanchenkoKrutSugulov.calendarapp.utils.createUserDB
 import com.ZanchenkoKrutSugulov.calendarapp.utils.isValidEmail
 import com.ZanchenkoKrutSugulov.calendarapp.utils.updateUserAfterGoogleRegister
@@ -100,6 +101,16 @@ class Register : AppCompatActivity() {
                 if (task.isSuccessful) {
                     val user = mAuth!!.currentUser
                     createUserDB(user)
+                    if (user != null) {
+                        createPrimaryCalendarForNewUser(user.uid)
+                    } else {
+                        Toast.makeText(
+                            this@Register,
+                            task.exception?.message ?: "Authentication failed!",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        Log.d("RegisterActivity", "Calendar Creation failed!", task.exception)
+                    }
                     Toast.makeText(this@Register, "Account created.", Toast.LENGTH_SHORT).show()
                     startActivity(Intent(applicationContext, Login::class.java))
                     finish()
