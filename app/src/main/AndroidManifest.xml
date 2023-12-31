@@ -18,7 +18,7 @@
         <activity
             android:name=".UserProfileActivity"
             android:exported="false"
-            android:theme="@style/Theme.Material3.Light.NoActionBar" />
+            android:theme="@style/Theme.CalendarApp" />
         <activity
             android:name=".Register"
             android:exported="false"
@@ -40,15 +40,15 @@
         <activity
             android:name=".activities.CreateEventActivity"
             android:exported="false"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"></activity>
+            android:theme="@style/Theme.CalendarApp" />
         <activity
             android:name=".activities.EditEventActivity"
             android:exported="false"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"></activity>
+            android:theme="@style/Theme.CalendarApp" />
         <activity
             android:name=".activities.DateActivity"
             android:exported="false"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"></activity>
+            android:theme="@style/Theme.CalendarApp" />
     </application>
 
 </manifest>
