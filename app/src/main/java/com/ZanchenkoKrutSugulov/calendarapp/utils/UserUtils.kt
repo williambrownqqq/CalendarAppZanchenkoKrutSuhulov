@@ -48,4 +48,5 @@ fun updateUserAfterGoogleRegister(firebaseUser: FirebaseUser?, account: GoogleSi
         .addOnFailureListener { e ->
             Log.w("UserProfileActivity", "Error updating user in db! ", e)
         }
+    createPrimaryCalendarForNewUser(firebaseUser.uid)
 }
