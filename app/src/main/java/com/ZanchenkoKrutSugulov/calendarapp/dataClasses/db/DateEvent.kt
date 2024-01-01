@@ -25,6 +25,9 @@ data class DateEvent(
     @ColumnInfo(name = "event_name")
     var name: String,
     @ColumnInfo(name = "event_description")
-    var description: String?
+    var description: String?,
+
+    @ColumnInfo(name = "calendarId")
+    var calendarId: String?
 
 )
