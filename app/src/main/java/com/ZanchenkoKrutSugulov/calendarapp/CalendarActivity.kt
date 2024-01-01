@@ -1,8 +1,10 @@
 package com.ZanchenkoKrutSugulov.calendarapp
 
-import CalendarAdapter
+import com.ZanchenkoKrutSugulov.calendarapp.recycleViews.CalendarAdapter
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.DeadObjectException
+import android.util.Log
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.ZanchenkoKrutSugulov.calendarapp.dataClasses.Calendar
@@ -29,16 +31,23 @@ class CalendarActivity : AppCompatActivity() {
     }
 
     private fun onDeleteCalendar(calendar: Calendar) {
-        calendarDao.deleteCalendar(calendar.calendarId)
+        calendar.calendarId?.let { calendarDao.deleteCalendar(it) }
         loadCalendars()
     }
 
     private fun loadCalendars() {
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        Log.d("CalendarActivity", "!LOAD CALENDARS USER ID: $userId")
         calendarDao.getCalendars(userId) { calendars ->
             calendarAdapter = CalendarAdapter(calendars, ::onEditCalendar, ::onDeleteCalendar)
             recyclerView.adapter = calendarAdapter
         }
     }
-
+    override fun onDestroy() {
+        try {
+            super.onDestroy()
+        } catch (e: DeadObjectException) {
+            Log.e("CalendarActivity", "Error in onDestroy: ${e.message}")
+        }
+    }
 }

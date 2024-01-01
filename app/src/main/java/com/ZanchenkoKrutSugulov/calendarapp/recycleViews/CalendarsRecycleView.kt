@@ -1,14 +1,12 @@
+package com.ZanchenkoKrutSugulov.calendarapp.recycleViews
+
 import android.widget.Button
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.ZanchenkoKrutSugulov.calendarapp.dataClasses.Calendar
-import android.content.res.ColorStateList
-import android.graphics.Color
-import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.annotation.RequiresApi
 import com.ZanchenkoKrutSugulov.calendarapp.R
 
 
