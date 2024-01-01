@@ -13,7 +13,7 @@ import com.ZanchenkoKrutSugulov.calendarapp.viewModels.dateEvent.DateEventViewMo
 import com.ZanchenkoKrutSugulov.calendarapp.viewModels.dateEvent.DateEventViewModelFactory
 import kotlinx.coroutines.launch
 import java.time.ZonedDateTime
-
+@RequiresApi(Build.VERSION_CODES.O)
 class CreateEventViewModel(private val application: Application, private val activity: AppCompatActivity, val date: ZonedDateTime): ViewModel() {
     lateinit var dateEventViewModel: DateEventViewModel
 
@@ -21,11 +21,9 @@ class CreateEventViewModel(private val application: Application, private val act
     var eventDescription = ""
     var eventId: Int? = null
 
-    @RequiresApi(Build.VERSION_CODES.O)
+
     var day = date.dayOfMonth
-    @RequiresApi(Build.VERSION_CODES.O)
     var month = date.monthValue
-    @RequiresApi(Build.VERSION_CODES.O)
     var year = date.year
 
     var hour: Int? = null
@@ -44,7 +42,6 @@ class CreateEventViewModel(private val application: Application, private val act
         )[DateEventViewModel::class.java]
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     fun createThisDateEvent(): DateEvent {
         return DateEvent(
             eventId ?: 0,
@@ -58,7 +55,6 @@ class CreateEventViewModel(private val application: Application, private val act
         )
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     fun submitDateEvent() =  viewModelScope.launch {
         if (eventId == null)  {
             insertEvent()
@@ -67,13 +63,11 @@ class CreateEventViewModel(private val application: Application, private val act
         replaceEvent()
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     fun replaceEvent() = viewModelScope.launch {
         val dateEvent = createThisDateEvent()
         dateEventViewModel.updateDateEvent(dateEvent)
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     fun insertEvent() = viewModelScope.launch {
         val dateEvent = createThisDateEvent()
         dateEventViewModel.insertDateEvent(dateEvent)
