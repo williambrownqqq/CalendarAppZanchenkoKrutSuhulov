@@ -21,10 +21,14 @@ class CalendarAdapter(
         private val btnEdit: Button = view.findViewById(R.id.btnEdit)
         private val btnDelete: Button = view.findViewById(R.id.btnDelete)
 
-        fun bind(calendar: Calendar, onEdit: (Calendar) -> Unit, onDelete: (Calendar) -> Unit) {
+        fun bind(calendar: Calendar, onEdit: (Calendar) -> Unit, onDelete: (Calendar) -> Unit, isPrimary: Boolean, isOnlyCalendar: Boolean)  {
             tvCalendarName.text = calendar.name
             btnEdit.setOnClickListener { onEdit(calendar) }
-            btnDelete.setOnClickListener { onDelete(calendar) }
+            btnDelete.isEnabled = !(isPrimary || isOnlyCalendar)
+            btnDelete.alpha = if (btnDelete.isEnabled) 1.0f else 0.5f
+            if (btnDelete.isEnabled) {
+                btnDelete.setOnClickListener { onDelete(calendar) }
+            }
         }
     }
 
@@ -33,7 +37,8 @@ class CalendarAdapter(
     }
 
     override fun onBindViewHolder(holder: CalendarViewHolder, position: Int) {
-        holder.bind(calendars[position], onEdit, onDelete)
+        val calendar = calendars[position]
+        holder.bind(calendar, onEdit, onDelete, calendar.primary, calendars.size == 1)
     }
 
     override fun getItemCount() = calendars.size
