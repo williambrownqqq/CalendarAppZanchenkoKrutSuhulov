@@ -6,8 +6,9 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.getValue
 
-class CalendarDatabase : CalendarDao {
+object CalendarDatabase : CalendarDao {
     private val database = FirebaseDatabase.getInstance()
     private val collection = database.getReference("calendars")
     private val collectionEvents = database.getReference("date_events")
@@ -29,9 +30,11 @@ class CalendarDatabase : CalendarDao {
         collection.orderByChild("userId").equalTo(userId)
             .addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    val calendars =
-                        snapshot.children.mapNotNull { it.getValue(Calendar::class.java) }
-                    callback(calendars)
+                    try {
+                        callback(snapshot.children.mapNotNull { it.getValue(Calendar::class.java) })
+                    } catch (e: Exception) {
+                        Log.e("FirebaseCalendarDao", "Error parsing calendars", e)
+                    }
                 }
 
                 override fun onCancelled(error: DatabaseError) {
@@ -52,4 +55,22 @@ class CalendarDatabase : CalendarDao {
                 }
             })
     }
+
+    fun getUserPrimaryCalendar(userId: String, callback: (Boolean) -> Unit) {
+        collection.orderByChild("userId").equalTo(userId)
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val hasPrimary = snapshot.children.any {
+                        it.getValue(Calendar::class.java)?.primary == true
+                    }
+                    callback(hasPrimary)
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    Log.e("FirebaseCalendarDao", "Error checking primary calendar: ${error.message}")
+                    callback(false)
+                }
+            })
+    }
+
 }

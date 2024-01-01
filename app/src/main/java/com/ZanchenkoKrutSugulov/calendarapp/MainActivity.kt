@@ -38,6 +38,7 @@ import com.google.firebase.auth.FirebaseUser
 class MainActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
     private lateinit var buttonShowProfile: ImageButton
+    private lateinit var buttonMenu: ImageButton
     private var currentUser: FirebaseUser? = null
     private lateinit var activityViewModel: MainActivityViewModel
 
@@ -48,11 +49,16 @@ class MainActivity : AppCompatActivity() {
 
         auth = FirebaseAuth.getInstance()
         buttonShowProfile = findViewById(R.id.buttonShowProfile)
+        buttonMenu = findViewById(R.id.buttonOpenCalendars)
         currentUser = auth.currentUser
 
 
         buttonShowProfile.setOnClickListener {
             startActivity(Intent(this, UserProfileActivity::class.java))
+        }
+
+        buttonMenu.setOnClickListener {
+            startActivity(Intent(this, CalendarActivity::class.java))
         }
 
         if (currentUser == null) {
@@ -156,18 +162,16 @@ class MainActivity : AppCompatActivity() {
     }
 
 
+    @SuppressLint("SetTextI18n")
     private fun setupEventView(dateEvents: List<DateEvent>) {
         val eventRecyclerView = findViewById<RecyclerView>(R.id.rvEvents)
         eventRecyclerView.layoutManager = LinearLayoutManager(this)
         eventRecyclerView.adapter = EventsRecycleViewAdapter(dateEvents, this@MainActivity) {dateEvent ->
             eventClearClick(dateEvent)
         }
-
-        val monthEventsTextView = findViewById<TextView>(R.id.tvMonthEvents)
-
         updateRecyclerViewHeight(eventRecyclerView, dateEvents)
 
-        monthEventsTextView.text = "Events of months (${dateEvents.size})"
+        findViewById<TextView>(R.id.tvMonthEvents).text = "Events of months (${dateEvents.size})"
     }
 
     private fun updateRecyclerViewHeight(recyclerView: RecyclerView, dateEvents: List<DateEvent>) {
@@ -175,7 +179,6 @@ class MainActivity : AppCompatActivity() {
 
 
         val scale = recyclerView.resources.displayMetrics.density
-        Log.d("MainActivity", "!EVENTS VIEW ITEMS: $itemCountToShow\nscale: $scale\nheight: ${(90 * itemCountToShow * scale).toInt()}")
         recyclerView.layoutParams.height = (90 * itemCountToShow * scale * 2).toInt()
         recyclerView.requestLayout()
     }

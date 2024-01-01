@@ -1,7 +1,7 @@
 package com.ZanchenkoKrutSugulov.calendarapp.utils
 
 import com.ZanchenkoKrutSugulov.calendarapp.dataClasses.Calendar
-import com.google.firebase.database.FirebaseDatabase
+import com.ZanchenkoKrutSugulov.calendarapp.database.dao.CalendarDatabase
 import java.util.UUID
 
 fun createPrimaryCalendarForNewUser(userId: String) {
@@ -9,9 +9,7 @@ fun createPrimaryCalendarForNewUser(userId: String) {
         calendarId = UUID.randomUUID().toString(),
         name = "Main",
         userId = userId,
-        isPrimary = true
+        primary = true
     )
-
-    val databaseReference = FirebaseDatabase.getInstance().getReference("calendars")
-    databaseReference.child(newCalendar.calendarId).setValue(newCalendar)
+    CalendarDatabase.createCalendar(newCalendar)
 }
