@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.DeadObjectException
 import android.util.Log
+import android.widget.ImageView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.ZanchenkoKrutSugulov.calendarapp.dataClasses.Calendar
@@ -16,15 +17,22 @@ class CalendarActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var calendarAdapter: CalendarAdapter
     private lateinit var calendarDao: CalendarDao
+    private lateinit var backButton: ImageView
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_calendar_actiivity)
+
+        backButton = findViewById(R.id.backFromCalendarsList)
 
         recyclerView = findViewById(R.id.recyclerViewCalendars)
         recyclerView.layoutManager = LinearLayoutManager(this)
 
         calendarDao = CalendarDatabase
         loadCalendars()
+
+        backButton.setOnClickListener {
+            finish()
+        }
     }
 
     private fun onEditCalendar(calendar: Calendar) {

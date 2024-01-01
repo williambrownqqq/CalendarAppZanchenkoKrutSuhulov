@@ -16,4 +16,5 @@
     <string name="open_calendars">Open Calendars</string>
     <string name="show_profile">Show Profile</string>
     <string name="events_of_months">Events of months</string>
+    <string name="arrow_back_calendars">arrow-back-calendars</string>
 </resources>
