@@ -61,12 +61,8 @@ object CalendarDatabase : CalendarDao {
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val hasPrimary = snapshot.children.any {
-                        Log.d("CalendarDataBase", "!hasPrimary VALUE: ${it.value}")
-                        Log.d("CalendarDataBase", "!hasPrimary VALUE: ${it.getValue(Calendar::class.java)}")
                         it.getValue(Calendar::class.java)?.primary == true
                     }
-                    Log.d("CalendarDataBase", "!hasPrimary: $hasPrimary")
-
                     callback(hasPrimary)
                 }
 
