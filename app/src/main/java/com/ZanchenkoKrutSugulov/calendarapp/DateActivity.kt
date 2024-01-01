@@ -1,5 +1,6 @@
-package com.ZanchenkoKrutSugulov.calendarapp.activities
+package com.ZanchenkoKrutSugulov.calendarapp
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -12,24 +13,23 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.ZanchenkoKrutSugulov.calendarapp.R
-import com.ZanchenkoKrutSugulov.calendarapp.dataClasses.db.DateEvent
+import com.ZanchenkoKrutSugulov.calendarapp.dataClasses.DateEvent
 import com.ZanchenkoKrutSugulov.calendarapp.recycleViews.EventsRecycleViewAdapter
 import com.ZanchenkoKrutSugulov.calendarapp.utils.epochSecondToLocalDate
 import com.ZanchenkoKrutSugulov.calendarapp.utils.getDaysOfWeekArray
 import com.ZanchenkoKrutSugulov.calendarapp.utils.getMonthsArray
 import com.ZanchenkoKrutSugulov.calendarapp.utils.localDateToEpochSecond
-import com.ZanchenkoKrutSugulov.calendarapp.viewModels.activities.dateActivity.DateActivityViewModel
-import com.ZanchenkoKrutSugulov.calendarapp.viewModels.activities.dateActivity.DateActivityViewModelFactory
+import com.ZanchenkoKrutSugulov.calendarapp.viewModels.activities.DateActivityViewModel
 import java.time.ZonedDateTime
 
+@RequiresApi(Build.VERSION_CODES.O)
 class DateActivity: AppCompatActivity() {
     private lateinit var date: ZonedDateTime
     private lateinit var dateActivityViewModel: DateActivityViewModel
 
     private lateinit var backButton: ImageView
 
-    @RequiresApi(Build.VERSION_CODES.O)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_date)
@@ -49,38 +49,43 @@ class DateActivity: AppCompatActivity() {
 
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun onStart() {
         super.onStart()
         getDateEvents()
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    fun getIntentExtras() {
-        Log.d("DateActivity", "${intent.toString()}")
+    private fun getIntentExtras() {
+        Log.d("DateActivity", intent.toString())
         if (intent == null) return;
         val epochSecond = intent.getLongExtra("date", 0)
 
         date = epochSecondToLocalDate(epochSecond)
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     private fun setupActivityViewModel() {
-        val factory = DateActivityViewModelFactory(application, this, date)
-        dateActivityViewModel = ViewModelProvider(
-            this,
-            factory
-        )[DateActivityViewModel::class.java]
+        dateActivityViewModel = ViewModelProvider(this).get(DateActivityViewModel::class.java)
+        observeDateEvents()
+        observeMonthEvents()
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
+    private fun observeDateEvents() {
+        dateActivityViewModel.dateEvents.observe(this) { dateEvents ->
+            setupEventView(dateEvents)
+        }
+        dateActivityViewModel.getDateEvents(date)
+    }
+    private fun observeMonthEvents() {
+        dateActivityViewModel.dateEvents.observe(this) { dateEvents ->
+            setupEventView(dateEvents)
+        }
+    }
+    @SuppressLint("SetTextI18n")
     private fun setupTextViews() {
         val currentDay = getDaysOfWeekArray()[date.dayOfWeek.value - 1]
         val dateText = findViewById<TextView>(R.id.tvDate)
         dateText.text = "${currentDay}, ${date.dayOfMonth} of ${getMonthsArray()[date.monthValue - 1]} ${date.year}"
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     private fun setupButtons() {
         val createEventButton = findViewById<Button>(R.id.btnCreateEvent)
         createEventButton.setOnClickListener {
@@ -88,14 +93,13 @@ class DateActivity: AppCompatActivity() {
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     private fun getDateEvents() {
         dateActivityViewModel.getMonthEvents()
         dateActivityViewModel.dateEvents.observe(this) {dateEvents ->
             setupEventView(dateEvents)
         }
     }
-    @RequiresApi(Build.VERSION_CODES.O)
+
     private fun setupEventView(dateEvents: List<DateEvent>?) {
         if (dateEvents == null) return;
 
@@ -106,12 +110,10 @@ class DateActivity: AppCompatActivity() {
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     private fun eventClearClick(dateEvent: DateEvent) {
-        dateActivityViewModel.dateEventViewModel.deleteDateEvent(dateEvent)
+        dateActivityViewModel.deleteDateEvent(dateEvent)
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     private fun createEvent() {
         val intent = Intent(this@DateActivity, CreateEventActivity::class.java)
         intent.putExtra("date", localDateToEpochSecond(date))

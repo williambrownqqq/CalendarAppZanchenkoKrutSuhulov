@@ -10,10 +10,10 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.ZanchenkoKrutSugulov.calendarapp.R
-import com.ZanchenkoKrutSugulov.calendarapp.activities.EditEventActivity
-import com.ZanchenkoKrutSugulov.calendarapp.dataClasses.db.DateEvent
+import com.ZanchenkoKrutSugulov.calendarapp.EditEventActivity
+import com.ZanchenkoKrutSugulov.calendarapp.dataClasses.DateEvent
 
-class EventsRecycleViewAdapter(private val dateEvents: List<DateEvent>, private val application: AppCompatActivity, private val onClearClick: (dateEvent:DateEvent) -> Unit): RecyclerView.Adapter<EventsRecycleViewHolder>() {
+class EventsRecycleViewAdapter(private val dateEvents: List<DateEvent>, private val application: AppCompatActivity, private val onClearClick: (dateEvent: DateEvent) -> Unit): RecyclerView.Adapter<EventsRecycleViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EventsRecycleViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
         val view = layoutInflater.inflate(R.layout.list_date_events, parent, false)

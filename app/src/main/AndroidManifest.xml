@@ -38,15 +38,15 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.CreateEventActivity"
+            android:name=".CreateEventActivity"
             android:exported="false"
             android:theme="@style/Theme.CalendarApp" />
         <activity
-            android:name=".activities.EditEventActivity"
+            android:name=".EditEventActivity"
             android:exported="false"
             android:theme="@style/Theme.CalendarApp" />
         <activity
-            android:name=".activities.DateActivity"
+            android:name=".DateActivity"
             android:exported="false"
             android:theme="@style/Theme.CalendarApp" />
     </application>

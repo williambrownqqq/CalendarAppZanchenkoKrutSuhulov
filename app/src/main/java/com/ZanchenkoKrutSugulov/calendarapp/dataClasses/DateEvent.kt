@@ -1,8 +1,8 @@
-package com.ZanchenkoKrutSugulov.calendarapp.dataClasses.db
+package com.ZanchenkoKrutSugulov.calendarapp.dataClasses
 
 
 data class DateEvent(
-    var id: Int,
+    var id: String,
     var year: Int,
     var month: Int,
     var day: Int,

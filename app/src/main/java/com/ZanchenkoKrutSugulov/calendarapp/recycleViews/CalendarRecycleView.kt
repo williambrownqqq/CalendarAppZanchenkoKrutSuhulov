@@ -11,7 +11,7 @@ import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import com.ZanchenkoKrutSugulov.calendarapp.R
 import com.ZanchenkoKrutSugulov.calendarapp.dataClasses.CalendarDay
-import com.ZanchenkoKrutSugulov.calendarapp.dataClasses.db.DateEvent
+import com.ZanchenkoKrutSugulov.calendarapp.dataClasses.DateEvent
 import com.ZanchenkoKrutSugulov.calendarapp.utils.getCalendarDays
 import java.time.LocalDate
 import java.time.ZonedDateTime

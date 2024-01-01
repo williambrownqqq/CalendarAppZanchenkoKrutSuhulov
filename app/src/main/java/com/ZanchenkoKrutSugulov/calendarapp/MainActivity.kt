@@ -4,35 +4,29 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.AdapterView
-import android.widget.AdapterView.OnItemSelectedListener
 import android.widget.ArrayAdapter
-import android.widget.Button
 import android.widget.ImageButton
 import android.widget.Spinner
 import android.widget.TextView
-import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.ZanchenkoKrutSugulov.calendarapp.activities.DateActivity
 import com.ZanchenkoKrutSugulov.calendarapp.dataClasses.CalendarDay
-import com.ZanchenkoKrutSugulov.calendarapp.dataClasses.db.DateEvent
+import com.ZanchenkoKrutSugulov.calendarapp.dataClasses.DateEvent
 import com.ZanchenkoKrutSugulov.calendarapp.recycleViews.CalendarRecycleViewAdapter
 import com.ZanchenkoKrutSugulov.calendarapp.recycleViews.EventsRecycleViewAdapter
 import com.ZanchenkoKrutSugulov.calendarapp.utils.getMonthsArray
 import com.ZanchenkoKrutSugulov.calendarapp.utils.getYearsArray
 import com.ZanchenkoKrutSugulov.calendarapp.utils.localDateToEpochSecond
-import com.ZanchenkoKrutSugulov.calendarapp.viewModels.activities.mainActivity.MainActivityViewModel
-import com.ZanchenkoKrutSugulov.calendarapp.viewModels.activities.mainActivity.MainActivityViewModelFactory
+import com.ZanchenkoKrutSugulov.calendarapp.viewModels.activities.MainActivityViewModel
+import com.ZanchenkoKrutSugulov.calendarapp.viewModels.activities.DateEventViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-
 
 @RequiresApi(Build.VERSION_CODES.O)
 class MainActivity : AppCompatActivity() {
@@ -77,13 +71,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupActivityViewModel() {
-        val factory = MainActivityViewModelFactory(application, this)
-        activityViewModel = ViewModelProvider(
-            this,
-            factory
-        )[MainActivityViewModel::class.java]
+        activityViewModel = ViewModelProvider(this)[MainActivityViewModel::class.java]
+        observeMonthEvents()
     }
-
     private fun observeMonthEvents() {
         activityViewModel.monthEvents.observe(this) { dateEvents ->
             if (dateEvents != null) {
@@ -111,35 +101,22 @@ class MainActivity : AppCompatActivity() {
         monthSpinner.setSelection(activityViewModel.currentDate.monthValue - 1)
         yearSpinner.setSelection(activityViewModel.currentDate.year - 2000)
 
-        monthSpinner.onItemSelectedListener = object: OnItemSelectedListener {
-            override fun onItemSelected(
-                parent: AdapterView<*>?,
-                view: View?,
-                position: Int,
-                id: Long
-            ) {
+        monthSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
                 activityViewModel.currentDate = activityViewModel.currentDate.withMonth(position + 1)
-                setupCalendarView()
                 getMonthEvents()
             }
 
-            override fun onNothingSelected(parent: AdapterView<*>?) {}
-
+            override fun onNothingSelected(parent: AdapterView<*>) {}
         }
 
-        yearSpinner.onItemSelectedListener = object: OnItemSelectedListener {
-            override fun onItemSelected(
-                parent: AdapterView<*>?,
-                view: View?,
-                position: Int,
-                id: Long
-            ) {
+        yearSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
                 activityViewModel.currentDate = activityViewModel.currentDate.withYear(position + 2000)
-                setupCalendarView()
                 getMonthEvents()
             }
 
-            override fun onNothingSelected(parent: AdapterView<*>?) {}
+            override fun onNothingSelected(parent: AdapterView<*>) {}
         }
     }
 
@@ -191,6 +168,7 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun eventClearClick(dateEvent: DateEvent) {
-        activityViewModel.dateEventViewModel.deleteDateEvent(dateEvent)
+        val dateEventViewModel = ViewModelProvider(this).get(DateEventViewModel::class.java)
+        dateEventViewModel.deleteDateEvent(dateEvent.id)
     }
 }
