@@ -3,6 +3,7 @@ package com.ZanchenkoKrutSugulov.calendarapp.utils
 import android.util.Log
 import android.widget.Toast
 import com.ZanchenkoKrutSugulov.calendarapp.dataClasses.User
+import com.ZanchenkoKrutSugulov.calendarapp.database.dao.CalendarDatabase
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
@@ -48,5 +49,12 @@ fun updateUserAfterGoogleRegister(firebaseUser: FirebaseUser?, account: GoogleSi
         .addOnFailureListener { e ->
             Log.w("UserProfileActivity", "Error updating user in db! ", e)
         }
-    createPrimaryCalendarForNewUser(firebaseUser.uid)
+
+
+    CalendarDatabase.getUserPrimaryCalendar(firebaseUser.uid) { hasPrimary ->
+        if (!hasPrimary) {
+            Log.d("UserUtils", "!hasPrimary: ${hasPrimary}")
+            createPrimaryCalendarForNewUser(firebaseUser.uid)
+        }
+    }
 }

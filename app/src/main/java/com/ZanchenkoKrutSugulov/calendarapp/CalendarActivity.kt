@@ -31,13 +31,12 @@ class CalendarActivity : AppCompatActivity() {
     }
 
     private fun onDeleteCalendar(calendar: Calendar) {
-        calendar.calendarId?.let { calendarDao.deleteCalendar(it) }
+        calendar.calendarId.let { calendarDao.deleteCalendar(it) }
         loadCalendars()
     }
 
     private fun loadCalendars() {
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
-        Log.d("CalendarActivity", "!LOAD CALENDARS USER ID: $userId")
         calendarDao.getCalendars(userId) { calendars ->
             calendarAdapter = CalendarAdapter(calendars, ::onEditCalendar, ::onDeleteCalendar)
             recyclerView.adapter = calendarAdapter

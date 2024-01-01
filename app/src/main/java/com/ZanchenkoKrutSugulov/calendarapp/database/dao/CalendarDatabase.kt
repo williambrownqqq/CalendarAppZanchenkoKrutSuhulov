@@ -27,29 +27,11 @@ object CalendarDatabase : CalendarDao {
     }
 
     override fun getCalendars(userId: String, callback: (List<Calendar>) -> Unit) {
-        Log.d("Calendar Database", "!LOAD CALENDARS - getCalendars")
-        Log.d("Calendar Database", "!LOAD CALENDARS - getCalendars - collection: $collection")
         collection.orderByChild("userId").equalTo(userId)
             .addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    Log.d("FirebaseCalendarDao", "Data snapshot: $snapshot")
                     try {
-                        Log.d("Calendar Database", "!LOAD CALENDARS - getCalendars - calendars count: ${snapshot.children.count()}")
-                        val items = mutableListOf<Calendar>()
-                        for (i in snapshot.children) {
-                            val item = i.value
-                            Log.d("Calendar Database", "!LOAD CALENDARS - getCalendars - item: $item")
-//                            item?.let { items.add(Calendar()) }
-                        }
-                        Log.d("Calendar Database", "!LOAD CALENDARS - getCalendars - items: $items")
-
-
-
-                        val calendars = snapshot.children.mapNotNull { it.getValue(Calendar::class.java) }
-                        Log.d("Calendar Database", "!LOAD CALENDARS - getCalendars - calendars: $calendars")
-
-
-                        callback(calendars)
+                        callback(snapshot.children.mapNotNull { it.getValue(Calendar::class.java) })
                     } catch (e: Exception) {
                         Log.e("FirebaseCalendarDao", "Error parsing calendars", e)
                     }
@@ -73,4 +55,26 @@ object CalendarDatabase : CalendarDao {
                 }
             })
     }
+
+    fun getUserPrimaryCalendar(userId: String, callback: (Boolean) -> Unit) {
+        collection.orderByChild("userId").equalTo(userId)
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val hasPrimary = snapshot.children.any {
+                        Log.d("CalendarDataBase", "!hasPrimary VALUE: ${it.value}")
+                        Log.d("CalendarDataBase", "!hasPrimary VALUE: ${it.getValue(Calendar::class.java)}")
+                        it.getValue(Calendar::class.java)?.primary == true
+                    }
+                    Log.d("CalendarDataBase", "!hasPrimary: $hasPrimary")
+
+                    callback(hasPrimary)
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    Log.e("FirebaseCalendarDao", "Error checking primary calendar: ${error.message}")
+                    callback(false)
+                }
+            })
+    }
+
 }
