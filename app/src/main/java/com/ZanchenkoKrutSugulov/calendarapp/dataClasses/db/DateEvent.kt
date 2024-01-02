@@ -3,6 +3,7 @@ package com.ZanchenkoKrutSugulov.calendarapp.dataClasses.db
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import java.time.Month
 
 @Entity(tableName = "date_event_table")
 data class DateEvent(
@@ -13,7 +14,7 @@ data class DateEvent(
     @ColumnInfo(name = "event_year")
     var year: Int,
     @ColumnInfo(name = "event_month")
-    var month: Int,
+    var month: Month,
     @ColumnInfo(name = "event_day")
     var day: Int,
 

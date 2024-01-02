@@ -4,12 +4,10 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.AdapterView.OnItemSelectedListener
 import android.widget.ArrayAdapter
-import android.widget.Button
 import android.widget.ImageButton
 import android.widget.Spinner
 import android.widget.TextView
@@ -23,6 +21,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.ZanchenkoKrutSugulov.calendarapp.activities.DateActivity
 import com.ZanchenkoKrutSugulov.calendarapp.dataClasses.CalendarDay
 import com.ZanchenkoKrutSugulov.calendarapp.dataClasses.db.DateEvent
+import com.ZanchenkoKrutSugulov.calendarapp.firebaseDB.FirebaseRealTimeDatabase
 import com.ZanchenkoKrutSugulov.calendarapp.recycleViews.CalendarRecycleViewAdapter
 import com.ZanchenkoKrutSugulov.calendarapp.recycleViews.EventsRecycleViewAdapter
 import com.ZanchenkoKrutSugulov.calendarapp.utils.getMonthsArray
@@ -32,7 +31,6 @@ import com.ZanchenkoKrutSugulov.calendarapp.viewModels.activities.mainActivity.M
 import com.ZanchenkoKrutSugulov.calendarapp.viewModels.activities.mainActivity.MainActivityViewModelFactory
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
@@ -42,9 +40,15 @@ import com.google.api.client.util.ExponentialBackOff;
 import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.CalendarScopes;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.api.client.util.DateTime
+import java.text.SimpleDateFormat
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneId
+
 
 import java.util.Collections;
+import java.util.Locale
 
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -144,11 +148,111 @@ class MainActivity : AppCompatActivity() {
                 .setApplicationName(getString(R.string.app_name))
                 .build()
 
-            fetchCalendarEvents(calendarService)
+            fetchCalendarEvents(calendarService, calendarId, selectedYear, selectedMonth)
         }
     }
 
-    private fun fetchCalendarEvents(calendarService: Calendar) {
+    private fun fetchCalendarEvents(
+        calendarService: Calendar,
+        calendarId: String,
+        selectedYear: Int,
+        selectedMonth: Int
+    ) {
+        val thread = Thread {
+            try {
+                val calendarList = calendarService.calendarList()?.list()?.execute()
+                runOnUiThread {
+                }
+            } catch (e: Exception) {
+                runOnUiThread {
+                    Toast.makeText(
+                        this,
+                        "Error fetching calendars: ${e.message}",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            }
+        }
+        thread.start()
+    }
+
+    private fun fetchEventsFromCalendar(calendarId: String, year: Int, month: Int) {
+        val thread = Thread {
+            try {
+                val startOfMonth = java.time.LocalDate.of(year, month, 1)
+                val endOfMonth = startOfMonth.withDayOfMonth(startOfMonth.lengthOfMonth())
+
+                val events = calendarService?.events()
+                    ?.list(calendarId)
+                    ?.setTimeMin(DateTime(startOfMonth.toString()))
+                    ?.setTimeMax(DateTime(endOfMonth.toString()))
+                    ?.execute()
+
+                val items = events?.items
+                if (items != null) {
+                    if (items.isNotEmpty()) {
+                        for (event in items) {
+                            val eventStart = event.start.dateTime ?: event.start.date
+                            val localDate: LocalDateTime? = if (eventStart != null) {
+                                Instant.ofEpochMilli(eventStart.value).atZone(ZoneId.systemDefault()).toLocalDateTime()
+                            } else null
+                            val newEvent = localDate?.let {
+                                DateEvent(
+                                    year = it.year,
+                                    month = it.month,
+                                    day = it.dayOfMonth,
+                                    hour = it.hour,
+                                    minute = it.minute,
+                                    name = event.summary,
+                                    description = event.description,
+                                    id = 0
+                                )
+                            }
+
+                            if (newEvent != null) {
+                                FirebaseRealTimeDatabase.saveDateEventToFirebase(newEvent)
+                            }
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                runOnUiThread {
+                    Toast.makeText(this, "Error fetching events: ${e.message}", Toast.LENGTH_LONG)
+                        .show()
+                }
+            }
+        }
+        thread.start()
+    }
+
+    private fun loadEventsFromGoogleCalendar() {
+        val selectedYear = activityViewModel.currentDate.year
+        val selectedMonth = activityViewModel.currentDate.monthValue
+
+        // Получите ID календаря пользователя (вы можете запросить пользователя выбрать из списка)
+        val calendarId = "primary" // или ID другого календаря пользователя
+
+        // Загрузите события для выбранного месяца и года
+        fetchCalendarEvents(calendarService!!, calendarId, selectedYear, selectedMonth)
+    }
+
+    private fun getFirstDayOfMonth(year: Int, month: Int): String {
+        val calendar = Calendar.getInstance()
+        calendar.set(Calendar.YEAR, year)
+        calendar.set(Calendar.MONTH, month - 1)
+        calendar.set(Calendar.DAY_OF_MONTH, 1)
+        val format = SimpleDateFormat("yyyy-MM-dd'T'00:00:00'Z'", Locale.getDefault())
+        return format.format(calendar.time)
+    }
+
+    private fun getLastDayOfMonth(year: Int, month: Int): String {
+        val calendar = Calendar.getInstance()
+        calendar.set(Calendar.YEAR, year)
+        calendar.set(Calendar.MONTH, month)
+        calendar.set(Calendar.DAY_OF_MONTH, 1)
+        calendar.add(Calendar.DAY_OF_MONTH, -1)
+        val format = SimpleDateFormat("yyyy-MM-dd'T'23:59:59'Z'", Locale.getDefault())
+        return format.format(calendar.time)
     }
 
     private fun setupSpinners() {
