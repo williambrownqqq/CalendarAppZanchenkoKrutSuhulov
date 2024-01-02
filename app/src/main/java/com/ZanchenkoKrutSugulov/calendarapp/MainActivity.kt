@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.AdapterView.OnItemSelectedListener
@@ -21,9 +22,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.ZanchenkoKrutSugulov.calendarapp.activities.DateActivity
 import com.ZanchenkoKrutSugulov.calendarapp.dataClasses.CalendarDay
 import com.ZanchenkoKrutSugulov.calendarapp.dataClasses.db.DateEvent
+import com.ZanchenkoKrutSugulov.calendarapp.database.dao.CalendarDatabase
 import com.ZanchenkoKrutSugulov.calendarapp.firebaseDB.FirebaseRealTimeDatabase
 import com.ZanchenkoKrutSugulov.calendarapp.recycleViews.CalendarRecycleViewAdapter
 import com.ZanchenkoKrutSugulov.calendarapp.recycleViews.EventsRecycleViewAdapter
+import com.ZanchenkoKrutSugulov.calendarapp.utils.createPrimaryCalendarForNewUser
 import com.ZanchenkoKrutSugulov.calendarapp.utils.getMonthsArray
 import com.ZanchenkoKrutSugulov.calendarapp.utils.getYearsArray
 import com.ZanchenkoKrutSugulov.calendarapp.utils.localDateToEpochSecond
@@ -41,6 +44,7 @@ import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.CalendarScopes;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.api.client.util.DateTime
+import com.google.firebase.firestore.FirebaseFirestore
 import java.text.SimpleDateFormat
 import java.time.Instant
 import java.time.LocalDateTime
@@ -229,10 +233,15 @@ class MainActivity : AppCompatActivity() {
         val selectedYear = activityViewModel.currentDate.year
         val selectedMonth = activityViewModel.currentDate.monthValue
 
-        // Получите ID календаря пользователя (вы можете запросить пользователя выбрать из списка)
-        val calendarId = "primary" // или ID другого календаря пользователя
+        auth.currentUser?.let {
+            CalendarDatabase.getUserPrimaryCalendar(it.uid) { hasPrimary ->
+                if (!hasPrimary) {
+                    Log.d("UserUtils", "!hasPrimary: $hasPrimary")
+                }
+            }
+        }
+        val calendarId = "primary"
 
-        // Загрузите события для выбранного месяца и года
         fetchCalendarEvents(calendarService!!, calendarId, selectedYear, selectedMonth)
     }
 
