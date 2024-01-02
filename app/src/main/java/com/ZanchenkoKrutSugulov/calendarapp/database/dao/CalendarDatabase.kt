@@ -43,6 +43,20 @@ object CalendarDatabase : CalendarDao {
             })
     }
 
+    override fun getCalendar(calendarId: String, callback: (Calendar?) -> Unit) {
+        collection.child(calendarId).addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val calendar = snapshot.getValue(Calendar::class.java)
+                callback(calendar)
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.e("FirebaseCalendarDao", "Error fetching calendar: ${error.message}")
+                callback(null)
+            }
+        })
+    }
+
     private fun deleteAllCalendarEvents(calendarId: String) {
         collectionEvents.orderByChild("calendarId").equalTo(calendarId)
             .addListenerForSingleValueEvent(object : ValueEventListener {
@@ -67,10 +81,12 @@ object CalendarDatabase : CalendarDao {
                 }
 
                 override fun onCancelled(error: DatabaseError) {
-                    Log.e("FirebaseCalendarDao", "Error checking primary calendar: ${error.message}")
+                    Log.e(
+                        "FirebaseCalendarDao",
+                        "Error checking primary calendar: ${error.message}"
+                    )
                     callback(false)
                 }
             })
     }
-
 }

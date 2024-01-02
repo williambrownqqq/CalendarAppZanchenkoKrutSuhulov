@@ -14,18 +14,17 @@ import com.ZanchenkoKrutSugulov.calendarapp.viewModels.dateEvent.DateEventViewMo
 import kotlinx.coroutines.launch
 import java.time.ZonedDateTime
 
+@RequiresApi(Build.VERSION_CODES.O)
 class CreateEventViewModel(private val application: Application, private val activity: AppCompatActivity, val date: ZonedDateTime): ViewModel() {
     lateinit var dateEventViewModel: DateEventViewModel
 
     var eventName = ""
     var eventDescription = ""
     var eventId: Int? = null
+    var calendarId: String? = ""
 
-    @RequiresApi(Build.VERSION_CODES.O)
     var day = date.dayOfMonth
-    @RequiresApi(Build.VERSION_CODES.O)
     var month = date.monthValue
-    @RequiresApi(Build.VERSION_CODES.O)
     var year = date.year
 
     var hour: Int? = null
@@ -54,7 +53,8 @@ class CreateEventViewModel(private val application: Application, private val act
             hour,
             minute,
             eventName,
-            eventDescription
+            eventDescription,
+            calendarId
         )
     }
 

@@ -52,10 +52,8 @@ class EditEventActivity: AppCompatActivity() {
         getEventInformation()
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     private fun getIntentExtras() {
         if (intent == null) return
-
         activityViewModel.eventId = intent.getIntExtra("eventId" ,-1)
     }
 
@@ -198,7 +196,4 @@ class EditEventActivity: AppCompatActivity() {
         dateTime = startDateTime
         setupUi()
     }
-
-
-
 }

@@ -1,5 +1,6 @@
 package com.ZanchenkoKrutSugulov.calendarapp
 
+import android.content.Intent
 import com.ZanchenkoKrutSugulov.calendarapp.recycleViews.CalendarAdapter
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -36,6 +37,9 @@ class CalendarActivity : AppCompatActivity() {
     }
 
     private fun onEditCalendar(calendar: Calendar) {
+        val intent = Intent(this, EditCalendarActivity::class.java)
+        intent.putExtra("calendar", calendar)
+        startActivity(intent)
     }
 
     private fun onDeleteCalendar(calendar: Calendar) {

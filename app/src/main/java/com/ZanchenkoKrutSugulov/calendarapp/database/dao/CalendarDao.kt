@@ -10,4 +10,5 @@ interface CalendarDao {
     fun deleteCalendar(calendarId: String)
 
     fun getCalendars(userId:String, callback:(List<Calendar>) -> Unit)
+    fun getCalendar(calendarId: String, callback: (Calendar?) -> Unit)
 }
