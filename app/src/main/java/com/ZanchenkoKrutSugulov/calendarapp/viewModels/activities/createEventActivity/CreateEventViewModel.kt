@@ -21,7 +21,6 @@ class CreateEventViewModel(private val application: Application, private val act
     var eventName = ""
     var eventDescription = ""
     var eventId: Int? = null
-    var calendarId: String? = ""
 
     var day = date.dayOfMonth
     var month = date.monthValue
@@ -53,8 +52,7 @@ class CreateEventViewModel(private val application: Application, private val act
             hour,
             minute,
             eventName,
-            eventDescription,
-            calendarId
+            eventDescription
         )
     }
 
