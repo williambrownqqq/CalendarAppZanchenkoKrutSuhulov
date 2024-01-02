@@ -30,4 +30,7 @@ interface DateEventDao {
 
     @Query("SELECT * FROM date_event_table WHERE event_id = :eventId")
     fun getDateEvent(eventId: Int): LiveData<DateEvent>
+
+    @Query("SELECT * FROM date_event_table WHERE calendarId = :calendarId")
+    fun getEventsForCalendar(calendarId: String): List<DateEvent>
 }
