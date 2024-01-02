@@ -32,6 +32,19 @@ import com.ZanchenkoKrutSugulov.calendarapp.viewModels.activities.mainActivity.M
 import com.ZanchenkoKrutSugulov.calendarapp.viewModels.activities.mainActivity.MainActivityViewModelFactory
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
+import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
+import com.google.api.client.http.HttpTransport;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.JsonFactory;
+import com.google.api.client.json.jackson2.JacksonFactory;
+import com.google.api.client.util.ExponentialBackOff;
+import com.google.api.services.calendar.Calendar;
+import com.google.api.services.calendar.CalendarScopes;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+
+import java.util.Collections;
 
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -41,6 +54,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var buttonMenu: ImageButton
     private var currentUser: FirebaseUser? = null
     private lateinit var activityViewModel: MainActivityViewModel
+    private var calendarService: Calendar? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -65,6 +79,7 @@ class MainActivity : AppCompatActivity() {
             startActivity(Intent(this, Login::class.java))
             finish()
         }
+        setupGoogleCalendarApi()
 
         setupActivityViewModel()
         setupSpinners()
@@ -98,6 +113,44 @@ class MainActivity : AppCompatActivity() {
         observeMonthEvents()
     }
 
+    private fun setupGoogleCalendarApi() {
+        val credential = GoogleAccountCredential.usingOAuth2(
+            this, listOf(CalendarScopes.CALENDAR_READONLY)
+        ).setBackOff(ExponentialBackOff())
+
+        val googleSignInAccount = GoogleSignIn.getLastSignedInAccount(this)
+        credential.selectedAccount = googleSignInAccount?.account
+
+        calendarService = Calendar.Builder(
+            NetHttpTransport(),
+            JacksonFactory.getDefaultInstance(),
+            credential
+        ).setApplicationName(getString(R.string.app_name))
+            .build()
+    }
+
+    private fun getCalendarEvents() {
+        val account = GoogleSignIn.getLastSignedInAccount(this)
+        if (account != null) {
+            val credential = GoogleAccountCredential.usingOAuth2(
+                this, Collections.singleton(CalendarScopes.CALENDAR)
+            ).setBackOff(ExponentialBackOff())
+
+            credential.selectedAccount = account.account
+
+            val transport: HttpTransport = NetHttpTransport()
+            val jsonFactory: JsonFactory = JacksonFactory.getDefaultInstance()
+            val calendarService = Calendar.Builder(transport, jsonFactory, credential)
+                .setApplicationName(getString(R.string.app_name))
+                .build()
+
+            fetchCalendarEvents(calendarService)
+        }
+    }
+
+    private fun fetchCalendarEvents(calendarService: Calendar) {
+    }
+
     private fun setupSpinners() {
         val monthSpinner = findViewById<Spinner>(R.id.spnMonth)
         val yearSpinner = findViewById<Spinner>(R.id.spnYear)
@@ -111,14 +164,15 @@ class MainActivity : AppCompatActivity() {
         monthSpinner.setSelection(activityViewModel.currentDate.monthValue - 1)
         yearSpinner.setSelection(activityViewModel.currentDate.year - 2000)
 
-        monthSpinner.onItemSelectedListener = object: OnItemSelectedListener {
+        monthSpinner.onItemSelectedListener = object : OnItemSelectedListener {
             override fun onItemSelected(
                 parent: AdapterView<*>?,
                 view: View?,
                 position: Int,
                 id: Long
             ) {
-                activityViewModel.currentDate = activityViewModel.currentDate.withMonth(position + 1)
+                activityViewModel.currentDate =
+                    activityViewModel.currentDate.withMonth(position + 1)
                 setupCalendarView()
                 getMonthEvents()
             }
@@ -127,14 +181,15 @@ class MainActivity : AppCompatActivity() {
 
         }
 
-        yearSpinner.onItemSelectedListener = object: OnItemSelectedListener {
+        yearSpinner.onItemSelectedListener = object : OnItemSelectedListener {
             override fun onItemSelected(
                 parent: AdapterView<*>?,
                 view: View?,
                 position: Int,
                 id: Long
             ) {
-                activityViewModel.currentDate = activityViewModel.currentDate.withYear(position + 2000)
+                activityViewModel.currentDate =
+                    activityViewModel.currentDate.withYear(position + 2000)
                 setupCalendarView()
                 getMonthEvents()
             }
@@ -148,11 +203,12 @@ class MainActivity : AppCompatActivity() {
         val calendarRecycleView = findViewById<RecyclerView>(R.id.rvCalendar)
         calendarRecycleView.layoutManager = GridLayoutManager(this, 7)
         calendarRecycleView.adapter = activityViewModel.monthEvents.value?.let { dateEvents ->
-            CalendarRecycleViewAdapter(activityViewModel.currentDate, { calendarDay ->
-                calendarDayClick(
-                    calendarDay
-                )
-            }, dateEvents,
+            CalendarRecycleViewAdapter(
+                activityViewModel.currentDate, { calendarDay ->
+                    calendarDayClick(
+                        calendarDay
+                    )
+                }, dateEvents,
                 getColorStateList(R.color.white),
                 getColorStateList(R.color.dayWithEvent),
                 getColorStateList(R.color.black),
@@ -166,9 +222,10 @@ class MainActivity : AppCompatActivity() {
     private fun setupEventView(dateEvents: List<DateEvent>) {
         val eventRecyclerView = findViewById<RecyclerView>(R.id.rvEvents)
         eventRecyclerView.layoutManager = LinearLayoutManager(this)
-        eventRecyclerView.adapter = EventsRecycleViewAdapter(dateEvents, this@MainActivity) {dateEvent ->
-            eventClearClick(dateEvent)
-        }
+        eventRecyclerView.adapter =
+            EventsRecycleViewAdapter(dateEvents, this@MainActivity) { dateEvent ->
+                eventClearClick(dateEvent)
+            }
         updateRecyclerViewHeight(eventRecyclerView, dateEvents)
 
         findViewById<TextView>(R.id.tvMonthEvents).text = "Events of months (${dateEvents.size})"
