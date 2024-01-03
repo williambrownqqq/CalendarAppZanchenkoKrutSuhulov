@@ -1,11 +1,11 @@
 package com.ZanchenkoKrutSugulov.calendarapp
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Switch
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import com.ZanchenkoKrutSugulov.calendarapp.dataClasses.Calendar
 import com.ZanchenkoKrutSugulov.calendarapp.database.dao.CalendarDatabase
 
@@ -40,9 +40,18 @@ class EditCalendarActivity : AppCompatActivity() {
         }
     }
     private fun loadCalendarData(calendarId: String) {
-        CalendarDatabase.getCalendar(calendarId) { calendar ->
-            originalCalendar = calendar
-            displayCalendarData()
+//        CalendarDatabase.getCalendar(calendarId) { calendar ->
+//            originalCalendar = calendar
+//            displayCalendarData()
+//        }
+
+        CalendarDatabase.getCalendar(calendarId) { calendar, events ->
+            if (calendar != null) {
+                originalCalendar = calendar
+                displayCalendarData() // Pass events to display function
+            } else {
+                // Handle error: calendar not found
+            }
         }
     }
 

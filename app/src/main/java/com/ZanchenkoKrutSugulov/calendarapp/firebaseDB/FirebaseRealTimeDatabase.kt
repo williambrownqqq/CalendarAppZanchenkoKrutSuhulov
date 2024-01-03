@@ -37,4 +37,10 @@ object FirebaseRealTimeDatabase {
         // Attach a ValueEventListener to get the data
         reference.addListenerForSingleValueEvent(listener)
     }
+
+    fun getDateEventByCalendarId(calendarId: String, listener: ValueEventListener) {
+        // Query for events where calendarId matches
+        reference.orderByChild("calendarId").equalTo(calendarId)
+            .addListenerForSingleValueEvent(listener)
+    }
 }

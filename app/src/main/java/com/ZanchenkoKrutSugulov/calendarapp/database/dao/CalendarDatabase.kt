@@ -2,11 +2,11 @@ package com.ZanchenkoKrutSugulov.calendarapp.database.dao
 
 import android.util.Log
 import com.ZanchenkoKrutSugulov.calendarapp.dataClasses.Calendar
+import com.ZanchenkoKrutSugulov.calendarapp.dataClasses.db.DateEvent
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import com.google.firebase.database.getValue
 
 object CalendarDatabase : CalendarDao {
     private val database = FirebaseDatabase.getInstance()
@@ -43,16 +43,47 @@ object CalendarDatabase : CalendarDao {
             })
     }
 
-    override fun getCalendar(calendarId: String, callback: (Calendar?) -> Unit) {
+//    override fun getCalendar(calendarId: String, callback: (Calendar?) -> Unit) {
+//        collection.child(calendarId).addListenerForSingleValueEvent(object : ValueEventListener {
+//            override fun onDataChange(snapshot: DataSnapshot) {
+//                val calendar = snapshot.getValue(Calendar::class.java)
+//                callback(calendar)
+//            }
+//
+//            override fun onCancelled(error: DatabaseError) {
+//                Log.e("FirebaseCalendarDao", "Error fetching calendar: ${error.message}")
+//                callback(null)
+//            }
+//        })
+//    }
+
+    override fun getCalendar(calendarId: String, callback: (Calendar?, List<DateEvent>?) -> Unit) {
         collection.child(calendarId).addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val calendar = snapshot.getValue(Calendar::class.java)
-                callback(calendar)
+
+                if (calendar != null) {
+                    // Fetch events for the retrieved calendar
+                    collectionEvents.orderByChild("calendarId").equalTo(calendarId)
+                        .addListenerForSingleValueEvent(object : ValueEventListener {
+                            override fun onDataChange(snapshot: DataSnapshot) {
+                                val events = snapshot.children.mapNotNull { it.getValue(DateEvent::class.java) }
+                                callback(calendar, events)
+                            }
+
+                            override fun onCancelled(error: DatabaseError) {
+                                Log.e("FirebaseCalendarDao", "Error fetching events: ${error.message}")
+                                callback(calendar, null) // Return calendar even if events failed
+                            }
+                        })
+                } else {
+                    callback(null, null)
+                }
             }
 
             override fun onCancelled(error: DatabaseError) {
                 Log.e("FirebaseCalendarDao", "Error fetching calendar: ${error.message}")
-                callback(null)
+                callback(null, null)
             }
         })
     }
