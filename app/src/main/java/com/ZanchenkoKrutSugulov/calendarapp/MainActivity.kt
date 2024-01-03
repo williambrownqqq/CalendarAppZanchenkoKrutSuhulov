@@ -158,12 +158,10 @@ class MainActivity : AppCompatActivity() {
     private fun setupCalendarView() {
         val calendarRecycleView = findViewById<RecyclerView>(R.id.rvCalendar)
         calendarRecycleView.layoutManager = GridLayoutManager(this, 7)
-        Log.d("setupCalendarView", "!Create Event  !dateEvents: ${monthEvents.value}")
 
         calendarRecycleView.adapter = monthEvents.value?.let { dateEvents ->
             CalendarRecycleViewAdapter(
                 currentDate, { calendarDay ->
-                    Log.d("setupCalendarView", "!Create Event  !dateEvents: calendarDay ${calendarDay}")
                     calendarDayClick(calendarDay)
                 }, dateEvents,
                 getColorStateList(R.color.white),
@@ -197,7 +195,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun calendarDayClick(calendarDay: CalendarDay) {
-        Log.d("calendarDayClick", "!Create Event calendarDayClick")
         val intent = Intent(this@MainActivity, DateActivity::class.java)
         intent.putExtra("date", localDateToEpochSecond(calendarDay.date))
         startActivity(intent)

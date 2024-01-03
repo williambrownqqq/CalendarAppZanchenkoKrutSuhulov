@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
@@ -93,9 +94,8 @@ class DateActivity : AppCompatActivity() {
             "${currentDay}, ${date.dayOfMonth} of ${getMonthsArray()[date.monthValue - 1]} ${date.year}"
     }
 
-    private fun setupButtons() {
-        val createEventButton = findViewById<Button>(R.id.btnCreateEvent)
-        createEventButton.setOnClickListener {
+    private fun setupButtons() { //        val createEventButton = findViewById<Button>(R.id.btnCreateEvent)
+        findViewById<Button>(R.id.btnCreateEvent).setOnClickListener {
             createEvent()
         }
     }
@@ -125,6 +125,7 @@ class DateActivity : AppCompatActivity() {
     }
 
     private fun createEvent() {
+        Log.d("DateActivity", "createEvent ")
         val intent = Intent(this@DateActivity, CreateEventActivity::class.java)
         intent.putExtra("date", localDateToEpochSecond(date))
         startActivity(intent)
