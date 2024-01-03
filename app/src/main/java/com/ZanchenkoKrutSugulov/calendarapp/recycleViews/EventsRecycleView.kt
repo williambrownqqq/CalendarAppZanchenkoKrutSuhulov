@@ -29,8 +29,6 @@ class EventsRecycleViewAdapter(private val dateEvents: List<DateEvent>, private 
     override fun onBindViewHolder(holder: EventsRecycleViewHolder, position: Int) {
         holder.bind(dateEvents[position], onClearClick) { dateEvent ->
             onEditClick(dateEvent)
-
-
         }
     }
 

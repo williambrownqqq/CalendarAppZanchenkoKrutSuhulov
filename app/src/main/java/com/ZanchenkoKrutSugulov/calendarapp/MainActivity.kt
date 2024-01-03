@@ -82,6 +82,7 @@ class MainActivity : AppCompatActivity() {
 //        activityViewModel = ViewModelProvider(this)[MainActivityViewModel::class.java]
         observeMonthEvents()
     }
+
     private fun observeMonthEvents() {
         Log.d("observeMonthEvents", "!monthEvents: ${monthEvents.map { it }}")
         monthEvents.observe(this) { dateEvents ->
@@ -98,13 +99,16 @@ class MainActivity : AppCompatActivity() {
         val year = currentDate.year
         val month = currentDate.monthValue
         val liveData = monthEvents as MutableLiveData
-        Log.d("MainActivityViewModel", "!EVENTS getMonthEvents")
+        Log.d("MainActivityViewModel", "!EVENTS getMonthEvents before EventDatabase")
 
         EventDatabase.getMonthEvents(year, month) { events ->
             liveData.postValue(events)
         }
 
-        Log.d("MainActivityViewModel", "!EVENTS getMonthEvents $monthEvents")
+        Log.d(
+            "MainActivityViewModel",
+            "!EVENTS getMonthEvents EventDatabase ${monthEvents.map { it }}"
+        )
         observeMonthEvents()
     }
 
@@ -120,7 +124,12 @@ class MainActivity : AppCompatActivity() {
         yearSpinner.setSelection(currentDate.year - 2000)
 
         monthSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+            override fun onItemSelected(
+                parent: AdapterView<*>,
+                view: View,
+                position: Int,
+                id: Long
+            ) {
                 currentDate = currentDate.withMonth(position + 1)
 
                 Log.d("setupSpinners", "!monthSpinner getMonthEvents ${monthSpinner.adapter}")
@@ -131,7 +140,12 @@ class MainActivity : AppCompatActivity() {
         }
 
         yearSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+            override fun onItemSelected(
+                parent: AdapterView<*>,
+                view: View,
+                position: Int,
+                id: Long
+            ) {
                 currentDate = currentDate.withYear(position + 2000)
                 Log.d("setupSpinners", "!yearSpinner getMonthEvents ${monthSpinner.adapter}")
                 getMonthEvents()
@@ -141,18 +155,17 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-
-    fun setupCalendarView() {
+    private fun setupCalendarView() {
         val calendarRecycleView = findViewById<RecyclerView>(R.id.rvCalendar)
         calendarRecycleView.layoutManager = GridLayoutManager(this, 7)
-        Log.d("setupCalendarView", "!dateEvents: ${monthEvents.value}")
+        Log.d("setupCalendarView", "!Create Event  !dateEvents: ${monthEvents.value}")
 
         calendarRecycleView.adapter = monthEvents.value?.let { dateEvents ->
-            CalendarRecycleViewAdapter(currentDate, { calendarDay ->
-                calendarDayClick(
-                    calendarDay
-                )
-            }, dateEvents,
+            CalendarRecycleViewAdapter(
+                currentDate, { calendarDay ->
+                    Log.d("setupCalendarView", "!Create Event  !dateEvents: calendarDay ${calendarDay}")
+                    calendarDayClick(calendarDay)
+                }, dateEvents,
                 getColorStateList(R.color.white),
                 getColorStateList(R.color.dayWithEvent),
                 getColorStateList(R.color.black),
@@ -166,9 +179,10 @@ class MainActivity : AppCompatActivity() {
     private fun setupEventView(dateEvents: List<DateEvent>) {
         val eventRecyclerView = findViewById<RecyclerView>(R.id.rvEvents)
         eventRecyclerView.layoutManager = LinearLayoutManager(this)
-        eventRecyclerView.adapter = EventsRecycleViewAdapter(dateEvents, this@MainActivity) {dateEvent ->
-            eventClearClick(dateEvent)
-        }
+        eventRecyclerView.adapter =
+            EventsRecycleViewAdapter(dateEvents, this@MainActivity) { dateEvent ->
+                eventClearClick(dateEvent)
+            }
         updateRecyclerViewHeight(eventRecyclerView, dateEvents)
 
         findViewById<TextView>(R.id.tvMonthEvents).text = "Events of months (${dateEvents.size})"
@@ -183,6 +197,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun calendarDayClick(calendarDay: CalendarDay) {
+        Log.d("calendarDayClick", "!Create Event calendarDayClick")
         val intent = Intent(this@MainActivity, DateActivity::class.java)
         intent.putExtra("date", localDateToEpochSecond(calendarDay.date))
         startActivity(intent)

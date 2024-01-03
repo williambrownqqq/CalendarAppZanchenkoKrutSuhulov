@@ -2,6 +2,7 @@ package com.ZanchenkoKrutSugulov.calendarapp.viewModels.activities
 
 import android.app.Application
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -29,6 +30,7 @@ class DateActivityViewModel(application: Application, private var date: ZonedDat
     }
 
     private fun getDayEvents() {
+        Log.d("getDayEvents",  "!Create Event calendarDayClick")
         EventDatabase.getDateEvents(date.year, date.monthValue, date.dayOfMonth) { events ->
             _dateEvents.postValue(events)
         }

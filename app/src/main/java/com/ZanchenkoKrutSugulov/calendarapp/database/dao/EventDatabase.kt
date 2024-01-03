@@ -28,46 +28,52 @@ object EventDatabase : DateEventDao {
         queryEvents(collection, callback)
     }
 
-//    override fun getMonthEvents(year: Int, month: Int, callback: (List<DateEvent>) -> Unit) {
-//
-//        val query = collection.orderByChild("year").equalTo(year.toDouble())
-//
-//        Log.d("getMonthEvents", "!getMonthEvents: $query")
-//        queryEvents(query, callback)
-//    }
-override fun getMonthEvents(year: Int, month: Int, callback: (List<DateEvent>) -> Unit) {
-    collection.orderByChild("year").equalTo(year.toDouble()).addValueEventListener(object : ValueEventListener {
-//    collection.orderByChild("year").equalTo(year.toDouble()).addValueEventListener(object : ValueEventListener {
-        override fun onDataChange(snapshot: DataSnapshot) {
-            val events = snapshot.children.mapNotNull { it.getValue(DateEvent::class.java) }
-                .filter { it.month == month }
-            callback(events)
-        }
+    override fun getMonthEvents(year: Int, month: Int, callback: (List<DateEvent>) -> Unit) {
+        collection.orderByChild("year").equalTo(year.toDouble())
+            .addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    Log.d(
+                        "",
+                        "getMonthEvents firebase: ${snapshot.children.mapNotNull { it.value }}"
+                    )
+                    val events = snapshot.children.mapNotNull { it.getValue(DateEvent::class.java) }
+//                .filter { it.month == month }
+                    callback(events)
+                }
 
-        override fun onCancelled(error: DatabaseError) {
-            Log.e("FirebaseDateEventDao", "Error fetching events: ${error.message}")
-        }
-    })
-}
+                override fun onCancelled(error: DatabaseError) {
+                    Log.e("FirebaseDateEventDao", "Error fetching events: ${error.message}")
+                }
+            })
+    }
 
 
-
-//    override fun getMonthEvents(year: Int, month: Int, callback: (List<DateEvent>) -> Unit) {
+    //    override fun getDateEvents(
+//        year: Int,
+//        month: Int,
+//        day: Int,
+//        callback: (List<DateEvent>) -> Unit
+//    ) {
+//        Log.d("EventDatabase", "!Create Event getDateEvents")
 //        val query = collection.orderByChild("event_year").equalTo(year.toDouble())
 //            .orderByChild("event_month").equalTo(month.toDouble())
+//            .orderByChild("event_day").equalTo(day.toDouble())
 //        queryEvents(query, callback)
 //    }
-
     override fun getDateEvents(
         year: Int,
         month: Int,
         day: Int,
         callback: (List<DateEvent>) -> Unit
     ) {
-        val query = collection.orderByChild("event_year").equalTo(year.toDouble())
-            .orderByChild("event_month").equalTo(month.toDouble())
-            .orderByChild("event_day").equalTo(day.toDouble())
-        queryEvents(query, callback)
+        Log.d("getDayEvents",  "!Create Event calendarDayClick Database")
+        val query = collection.orderByChild("year").equalTo(year.toDouble())
+        Log.d("getDayEvents",  "!Create Event calendarDayClick Database query $query")
+
+        queryEvents(query) { events ->
+            val filteredEvents = events.filter { it.month == month && it.day == day }
+            callback(filteredEvents)
+        }
     }
 
     override fun getDateEvent(eventId: String, callback: (DateEvent?) -> Unit) {
@@ -93,32 +99,3 @@ override fun getMonthEvents(year: Int, month: Int, callback: (List<DateEvent>) -
         })
     }
 }
-//    fun saveDateEventToFirebase(dateEvent: DateEvent) {
-//        val eventId = reference.push().key ?: ""
-//        reference.child(eventId).setValue(dateEvent)
-//    }
-//
-//    fun updateDateEventInFirebase(eventId: String, updatedDateEvent: DateEvent) {
-//        // Update the DateEvent using its ID/key
-//        reference.child(eventId).setValue(updatedDateEvent)
-//    }
-//
-//    fun deleteDateEventFromFirebase(eventId: String) {
-//        // Remove the DateEvent using its ID/key
-//        reference.child(eventId).removeValue()
-//    }
-//
-//    // Get all DateEvents
-//    fun getAllDateEventsFromFirebase(listener: ValueEventListener) {
-//
-//        // Attach a ValueEventListener to get the data
-//        reference.addListenerForSingleValueEvent(listener)
-//    }
-//
-//    // Get a specific DateEvent by ID
-//    fun getDateEventFromFirebase(eventId: String, listener: ValueEventListener) {
-//
-//        // Attach a ValueEventListener to get the data
-//        reference.addListenerForSingleValueEvent(listener)
-//    }
-//}

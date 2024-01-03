@@ -10,6 +10,7 @@ import com.ZanchenkoKrutSugulov.calendarapp.database.dao.EventDatabase
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.launch
 import java.time.ZonedDateTime
+import java.util.UUID
 
 @RequiresApi(Build.VERSION_CODES.O)
 class CreateEventViewModel(private val application: Application, val date: ZonedDateTime): ViewModel() {
@@ -28,7 +29,7 @@ class CreateEventViewModel(private val application: Application, val date: Zoned
 
     private fun createThisDateEvent(): DateEvent {
         return DateEvent(
-            id ?: "",
+            id ?: UUID.randomUUID().toString(),
             year,
             month,
             day,
@@ -58,7 +59,7 @@ class CreateEventViewModel(private val application: Application, val date: Zoned
 
     fun getEventFromFirebase(eventId: String, callback: (DateEvent?) -> Unit) {
         val database = FirebaseDatabase.getInstance()
-        val eventRef = database.getReference("date_events").child(eventId.toString())
+        val eventRef = database.getReference("date_events").child(eventId)
 
         eventRef.get().addOnSuccessListener { dataSnapshot ->
             val dateEvent = dataSnapshot.getValue(DateEvent::class.java)

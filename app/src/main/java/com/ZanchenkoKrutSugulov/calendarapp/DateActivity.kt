@@ -10,6 +10,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -23,16 +25,19 @@ import com.ZanchenkoKrutSugulov.calendarapp.viewModels.activities.DateActivityVi
 import java.time.ZonedDateTime
 
 @RequiresApi(Build.VERSION_CODES.O)
-class DateActivity: AppCompatActivity() {
+class DateActivity : AppCompatActivity() {
     private lateinit var date: ZonedDateTime
     private lateinit var dateActivityViewModel: DateActivityViewModel
 
     private lateinit var backButton: ImageView
+    private val _dateEvents = MutableLiveData<List<DateEvent>>()
+    val dateEvents: LiveData<List<DateEvent>> = _dateEvents
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_date)
+        Log.d("DateActivity", "!Create Event calendarDayClick")
 
         getIntentExtras()
         setupActivityViewModel()
@@ -54,36 +59,59 @@ class DateActivity: AppCompatActivity() {
         getDateEvents()
     }
 
-    private fun getIntentExtras() {
-        Log.d("DateActivity", intent.toString())
-        if (intent == null) return;
+    //    private fun getIntentExtras() {
+//        Log.d("DateActivity", intent.toString())
+//        if (intent == null) return;
+//        val epochSecond = intent.getLongExtra("date", 0)
+//
+//        date = epochSecondToLocalDate(epochSecond)
+//    }
+    private fun getIntentExtras(): Boolean {
         val epochSecond = intent.getLongExtra("date", 0)
+        Log.d("getIntentExtras",  "!Create Event calendarDayClick $epochSecond")
+        return if (epochSecond != 0L) {
+            date = epochSecondToLocalDate(epochSecond)
+            Log.d("getIntentExtras",  "!Create Event calendarDayClick $date")
 
-        date = epochSecondToLocalDate(epochSecond)
+            true
+        } else {
+            false
+        }
     }
 
-    private fun setupActivityViewModel() {
-        dateActivityViewModel = ViewModelProvider(this).get(DateActivityViewModel::class.java)
-        observeDateEvents()
-        observeMonthEvents()
-    }
-
+//    private fun setupActivityViewModel() {
+//        Log.d("DateActivity",  "!Create Event calendarDayClick setupActivityViewModel")
+//        dateActivityViewModel = ViewModelProvider(this)[DateActivityViewModel::class.java]
+//        observeDateEvents()
+//        observeMonthEvents()
+//    }
+private fun setupActivityViewModel() {
+    Log.d("DateActivity",  "!Create Event calendarDayClick setupActivityViewModel")
+    dateActivityViewModel = ViewModelProvider(this)[DateActivityViewModel::class.java]
+    observeDateEvents()
+    observeMonthEvents()
+}
     private fun observeDateEvents() {
+        Log.d("DateActivity",  "!Create Event calendarDayClick observeDateEvents")
+
         dateActivityViewModel.dateEvents.observe(this) { dateEvents ->
             setupEventView(dateEvents)
         }
         dateActivityViewModel.getDateEvents(date)
     }
+
     private fun observeMonthEvents() {
         dateActivityViewModel.dateEvents.observe(this) { dateEvents ->
             setupEventView(dateEvents)
         }
     }
+
     @SuppressLint("SetTextI18n")
     private fun setupTextViews() {
         val currentDay = getDaysOfWeekArray()[date.dayOfWeek.value - 1]
         val dateText = findViewById<TextView>(R.id.tvDate)
-        dateText.text = "${currentDay}, ${date.dayOfMonth} of ${getMonthsArray()[date.monthValue - 1]} ${date.year}"
+        dateText.text =
+            "${currentDay}, ${date.dayOfMonth} of ${getMonthsArray()[date.monthValue - 1]} ${date.year}"
     }
 
     private fun setupButtons() {
@@ -95,19 +123,23 @@ class DateActivity: AppCompatActivity() {
 
     private fun getDateEvents() {
         dateActivityViewModel.getMonthEvents()
-        dateActivityViewModel.dateEvents.observe(this) {dateEvents ->
+        dateActivityViewModel.dateEvents.observe(this) { dateEvents ->
             setupEventView(dateEvents)
         }
     }
 
     private fun setupEventView(dateEvents: List<DateEvent>?) {
+
+        Log.d("DateActivity",  "!Create Event calendarDayClick setupEventView dateEvents: ${dateEvents?.map { it }}")
+
         if (dateEvents == null) return;
 
         val eventRecyclerView = findViewById<RecyclerView>(R.id.rvDateEvents)
         eventRecyclerView.layoutManager = LinearLayoutManager(this)
-        eventRecyclerView.adapter = EventsRecycleViewAdapter(dateEvents, this@DateActivity) {dateEvent ->
-            eventClearClick(dateEvent)
-        }
+        eventRecyclerView.adapter =
+            EventsRecycleViewAdapter(dateEvents, this@DateActivity) { dateEvent ->
+                eventClearClick(dateEvent)
+            }
     }
 
     private fun eventClearClick(dateEvent: DateEvent) {

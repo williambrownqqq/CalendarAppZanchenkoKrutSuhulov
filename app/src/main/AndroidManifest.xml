@@ -47,7 +47,7 @@
             android:theme="@style/Theme.CalendarApp" />
         <activity
             android:name=".DateActivity"
-            android:exported="false"
+            android:exported="true"
             android:theme="@style/Theme.CalendarApp" />
     </application>
 

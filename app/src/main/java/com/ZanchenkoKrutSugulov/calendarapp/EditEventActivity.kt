@@ -52,8 +52,7 @@ class EditEventActivity : AppCompatActivity() {
 
     private fun getIntentExtras() {
         if (intent == null) return
-
-        activityViewModel.id = intent.getIntExtra("id", -1).toString()
+        activityViewModel.id = intent.getStringExtra("id")
     }
 
     private fun getEventInformation() {

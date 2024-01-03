@@ -147,8 +147,6 @@ class CreateEventActivity : AppCompatActivity() {
         dateTime = startDateTime
         setupSpinners()
     }
-
-
 }
 
 
