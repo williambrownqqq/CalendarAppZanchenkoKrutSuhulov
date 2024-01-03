@@ -12,6 +12,7 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.map
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.ZanchenkoKrutSugulov.calendarapp.dataClasses.DateEvent
@@ -29,7 +30,7 @@ class DateActivity : AppCompatActivity() {
 
     private lateinit var backButton: ImageView
     private val _dateEvents = MutableLiveData<List<DateEvent>>()
-    val dateEvents: LiveData<List<DateEvent>> = _dateEvents
+    private val dateEvents: LiveData<List<DateEvent>> = _dateEvents
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -70,15 +71,19 @@ class DateActivity : AppCompatActivity() {
         observeDateEvents()
         observeMonthEvents()
     }
-
     private fun observeDateEvents() {
         dateEvents.observe(this) { dateEvents ->
             setupEventView(dateEvents)
         }
-        EventDatabase.getDateEvents(date.year, date.monthValue, date.dayOfMonth) { events ->
-            _dateEvents.postValue(events)
-        }
     }
+//    private fun observeDateEvents() {
+//        dateEvents.observe(this) { dateEvents ->
+//            setupEventView(dateEvents)
+//        }
+//        EventDatabase.getDateEvents(date.year, date.monthValue, date.dayOfMonth) { events ->
+//            _dateEvents.postValue(events)
+//        }
+//    }
 
     private fun observeMonthEvents() {
         dateEvents.observe(this) { dateEvents ->
@@ -94,21 +99,31 @@ class DateActivity : AppCompatActivity() {
             "${currentDay}, ${date.dayOfMonth} of ${getMonthsArray()[date.monthValue - 1]} ${date.year}"
     }
 
-    private fun setupButtons() { //        val createEventButton = findViewById<Button>(R.id.btnCreateEvent)
+    private fun setupButtons() {
         findViewById<Button>(R.id.btnCreateEvent).setOnClickListener {
             createEvent()
         }
     }
 
-    private fun getDateEvents() {
-        EventDatabase.getMonthEvents(date.year, date.monthValue) { events ->
-            _dateEvents.postValue(events)
-        }
-        dateEvents.observe(this) { dateEvents ->
-            setupEventView(dateEvents)
-        }
+//    private fun getDateEvents() {
+//        Log.d("DateActivity", "getDateEvents ${date.year}, ${date.monthValue}")
+//        EventDatabase.getMonthEvents(date.year, date.monthValue) { events ->
+//            Log.d("DateActivity", "getDateEvents - events ${events.map { it }}")
+//
+//            _dateEvents.postValue(events)
+//        }
+//        dateEvents.observe(this) { dateEvents ->
+//            setupEventView(dateEvents)
+//        }
+//        Log.d("DateActivity", "getDateEvents - dateEvents ${dateEvents.map { it }}")
+//    }
+private fun getDateEvents() {
+    Log.d("DateActivity", "getDateEvents ${date.year}, ${date.monthValue}, ${date.dayOfMonth}")
+    EventDatabase.getDateEvents(date.year, date.monthValue, date.dayOfMonth) { events ->
+        Log.d("DateActivity", "getDateEvents - events: ${events.map { it }}")
+        _dateEvents.postValue(events)
     }
-
+}
     private fun setupEventView(dateEvents: List<DateEvent>?) {
         if (dateEvents == null) return;
 

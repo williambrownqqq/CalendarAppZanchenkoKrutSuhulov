@@ -33,7 +33,7 @@ object EventDatabase : DateEventDao {
             .addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val events = snapshot.children.mapNotNull { it.getValue(DateEvent::class.java) }
-//                .filter { it.month == month }
+                        .filter { it.month == month }
                     callback(events)
                 }
 
@@ -43,19 +43,21 @@ object EventDatabase : DateEventDao {
             })
     }
 
-    override fun getDateEvents(
-        year: Int,
-        month: Int,
-        day: Int,
-        callback: (List<DateEvent>) -> Unit
-    ) {
+    override fun getDateEvents(year: Int, month: Int, day: Int, callback: (List<DateEvent>) -> Unit) {
         val query = collection.orderByChild("year").equalTo(year.toDouble())
+        query.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val events = snapshot.children.mapNotNull { it.getValue(DateEvent::class.java) }
+                    .filter { it.month == month && it.day == day }
+                callback(events)
+            }
 
-        queryEvents(query) { events ->
-            val filteredEvents = events.filter { it.month == month && it.day == day }
-            callback(filteredEvents)
-        }
+            override fun onCancelled(error: DatabaseError) {
+                Log.e("FirebaseDateEventDao", "Error fetching events: ${error.message}")
+            }
+        })
     }
+
 
     override fun getDateEvent(eventId: String, callback: (DateEvent?) -> Unit) {
         collection.child(eventId).get().addOnSuccessListener {
