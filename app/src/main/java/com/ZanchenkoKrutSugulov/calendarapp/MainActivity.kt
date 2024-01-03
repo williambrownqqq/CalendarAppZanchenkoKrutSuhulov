@@ -23,7 +23,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.ZanchenkoKrutSugulov.calendarapp.activities.DateActivity
 import com.ZanchenkoKrutSugulov.calendarapp.dataClasses.CalendarDay
 import com.ZanchenkoKrutSugulov.calendarapp.dataClasses.db.DateEvent
-import com.ZanchenkoKrutSugulov.calendarapp.database.dao.CalendarDatabase
 import com.ZanchenkoKrutSugulov.calendarapp.firebaseDB.FirebaseRealTimeDatabase
 import com.ZanchenkoKrutSugulov.calendarapp.recycleViews.CalendarRecycleViewAdapter
 import com.ZanchenkoKrutSugulov.calendarapp.recycleViews.EventsRecycleViewAdapter
@@ -49,6 +48,12 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 import com.google.api.services.calendar.model.CalendarListEntry
 import androidx.appcompat.app.AlertDialog
+import com.ZanchenkoKrutSugulov.calendarapp.database.dao.DateEventDao
+import com.ZanchenkoKrutSugulov.calendarapp.viewModels.dateEvent.DateEventViewModel
+import com.google.api.services.calendar.model.Event
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import java.util.Collections;
 
 
@@ -88,7 +93,6 @@ class MainActivity : AppCompatActivity() {
         }
 
         syncButton.setOnClickListener {
-//            getCalendarEvents()
             listCalendars()
         }
 
@@ -145,11 +149,9 @@ class MainActivity : AppCompatActivity() {
     private fun listCalendars() {
         val thread = Thread {
             try {
-                Log.d("MainActivity", "!CALENDARS SYNC: $calendarService")
-                Log.d("MainActivity", "!CALENDARS SYNC: ${calendarService?.calendarList()?.list()}")
-                Log.d("MainActivity", "!CALENDARS SYNC: ${calendarService?.calendarList()?.list()?.execute()?.items?.map { it.id }}")
                 val calendarList = calendarService?.calendarList()?.list()?.execute()
                 val calendars = calendarList?.items
+                Log.d("MainActivity", "!CALENDARS SYNC: ${calendars?.map { it.id }}")
 
                 runOnUiThread {
                     if (calendars != null) {
@@ -170,8 +172,7 @@ class MainActivity : AppCompatActivity() {
         val builder = AlertDialog.Builder(this)
         builder.setTitle("Choose a Calendar")
         builder.setItems(calendarNames) { _, which ->
-            val selectedCalendarId = calendars[which].id
-            loadEventsFromGoogleCalendar(selectedCalendarId)
+            loadEventsFromGoogleCalendar(calendars[which].id)
         }
         builder.show()
     }
@@ -198,35 +199,28 @@ class MainActivity : AppCompatActivity() {
     private fun fetchEventsFromCalendar(calendarId: String, year: Int, month: Int) {
         val thread = Thread {
             try {
-                val startOfMonth = java.time.LocalDate.of(year, month, 1)
-                val endOfMonth = startOfMonth.withDayOfMonth(startOfMonth.lengthOfMonth())
-
+                val startOfMonth = java.time.LocalDate.of(year, month, 1).toString() + "T00:00:00-07:00"
+                val endOfMonth = java.time.LocalDate.of(year, month, 1).withDayOfMonth(
+                    java.time.LocalDate.of(year, month, 1).lengthOfMonth()
+                ).toString() + "T23:59:59-07:00"
                 val events = calendarService?.events()
                     ?.list(calendarId)
-                    ?.setTimeMin(DateTime(startOfMonth.toString()))
-                    ?.setTimeMax(DateTime(endOfMonth.toString()))
+                    ?.setTimeMin(DateTime(startOfMonth))
+                    ?.setTimeMax(DateTime(endOfMonth))
                     ?.execute()
+
+                Log.d("MainActivity", "!CALENDARS SYNC: Events: ${events?.items?.map { it}}")
+
 
                 val items = events?.items
                 if (items != null) {
                     if (items.isNotEmpty()) {
                         for (event in items) {
                             val eventStart = event.start.dateTime ?: event.start.date
-                            val localDate: LocalDateTime? = if (eventStart != null) {
-                                Instant.ofEpochMilli(eventStart.value).atZone(ZoneId.systemDefault()).toLocalDateTime()
-                            } else null
-                            val newEvent = localDate?.let {
-                                DateEvent(
-                                    year = it.year,
-                                    month = it.month.value,
-                                    day = it.dayOfMonth,
-                                    hour = it.hour,
-                                    minute = it.minute,
-                                    name = event.summary,
-                                    description = event.description,
-                                    id = 0
-                                )
-                            }
+                            val localDate: LocalDateTime = getLocalDateTime(eventStart)
+                            Log.d("MainActivity", "!CALENDARS SYNC: Converting: $localDate")
+                            val newEvent = convertEventFromGoogleCalendar(localDate, event)
+                            Log.d("MainActivity", "!CALENDARS SYNC: newEvent: ${newEvent.toString()}")
 
                             if (newEvent != null) {
                                 FirebaseRealTimeDatabase.saveDateEventToFirebase(newEvent)
@@ -238,24 +232,35 @@ class MainActivity : AppCompatActivity() {
                 runOnUiThread {
                     Toast.makeText(this, "Error fetching events: ${e.message}", Toast.LENGTH_LONG)
                         .show()
+                    Log.d("MainActivity", "!CALENDARS SYNC: Error fetching events: ${e.message}")
+
                 }
             }
         }
         thread.start()
     }
+    private fun getLocalDateTime(eventStart: DateTime): LocalDateTime {
+        return Instant.ofEpochMilli(eventStart.value).atZone(ZoneId.systemDefault()).toLocalDateTime()
+    }
+    private fun convertEventFromGoogleCalendar(localDate: LocalDateTime?, event: Event): DateEvent? {
+        Log.d("MainActivity", "!CALENDARS SYNC: convertEventFromGoogleCalendar: ${localDate?.year}")
+        return localDate?.let {
+            DateEvent(
+                year = it.year,
+                month = it.month.value,
+                day = it.dayOfMonth,
+                hour = it.hour,
+                minute = it.minute,
+                name = event.summary,
+                description = event.description,
+                id = 0
+            )
+        }
+    }
 
     private fun loadEventsFromGoogleCalendar(calendarId: String) {
         val selectedYear = activityViewModel.currentDate.year
         val selectedMonth = activityViewModel.currentDate.monthValue
-//
-//        auth.currentUser?.let {
-//            CalendarDatabase.getUserPrimaryCalendar(it.uid) { hasPrimary ->
-//                if (!hasPrimary) {
-//                    Log.d("UserUtils", "!hasPrimary: $hasPrimary")
-//                }
-//            }
-//        }
-
         fetchEventsFromCalendar(calendarId, selectedYear, selectedMonth)
     }
 

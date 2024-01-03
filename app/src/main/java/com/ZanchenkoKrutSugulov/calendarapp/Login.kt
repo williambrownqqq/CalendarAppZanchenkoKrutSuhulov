@@ -104,6 +104,7 @@ class Login : AppCompatActivity() {
             .requestIdToken(getString(R.string.default_web_client_id))
             .requestEmail()
             .requestScopes(Scope(CalendarScopes.CALENDAR_READONLY))
+            .requestScopes(Scope(CalendarScopes.CALENDAR_EVENTS_READONLY))
             .build()
 
         googleSignInClient = GoogleSignIn.getClient(this, gso)
