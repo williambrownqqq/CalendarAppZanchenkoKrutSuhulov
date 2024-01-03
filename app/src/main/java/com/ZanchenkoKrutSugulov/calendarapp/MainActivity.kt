@@ -27,7 +27,6 @@ import com.ZanchenkoKrutSugulov.calendarapp.database.dao.CalendarDatabase
 import com.ZanchenkoKrutSugulov.calendarapp.firebaseDB.FirebaseRealTimeDatabase
 import com.ZanchenkoKrutSugulov.calendarapp.recycleViews.CalendarRecycleViewAdapter
 import com.ZanchenkoKrutSugulov.calendarapp.recycleViews.EventsRecycleViewAdapter
-import com.ZanchenkoKrutSugulov.calendarapp.utils.createPrimaryCalendarForNewUser
 import com.ZanchenkoKrutSugulov.calendarapp.utils.getMonthsArray
 import com.ZanchenkoKrutSugulov.calendarapp.utils.getYearsArray
 import com.ZanchenkoKrutSugulov.calendarapp.utils.localDateToEpochSecond
@@ -45,15 +44,12 @@ import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.CalendarScopes;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.api.client.util.DateTime
-import com.google.firebase.firestore.FirebaseFirestore
-import java.text.SimpleDateFormat
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
-
-
+import com.google.api.services.calendar.model.CalendarListEntry
+import androidx.appcompat.app.AlertDialog
 import java.util.Collections;
-import java.util.Locale
 
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -92,10 +88,11 @@ class MainActivity : AppCompatActivity() {
         }
 
         syncButton.setOnClickListener {
-            getCalendarEvents()
+//            getCalendarEvents()
+            listCalendars()
         }
-        setupGoogleCalendarApi()
 
+        setupGoogleCalendarApi()
         setupActivityViewModel()
         setupSpinners()
 
@@ -144,6 +141,39 @@ class MainActivity : AppCompatActivity() {
             .build()
         Log.d("!GOOGLE API", "!GOOGLE API SERVICE: ${calendarService}")
 
+    }
+    private fun listCalendars() {
+        val thread = Thread {
+            try {
+                Log.d("MainActivity", "!CALENDARS SYNC: $calendarService")
+                Log.d("MainActivity", "!CALENDARS SYNC: ${calendarService?.calendarList()?.list()}")
+                Log.d("MainActivity", "!CALENDARS SYNC: ${calendarService?.calendarList()?.list()?.execute()?.items?.map { it.id }}")
+                val calendarList = calendarService?.calendarList()?.list()?.execute()
+                val calendars = calendarList?.items
+
+                runOnUiThread {
+                    if (calendars != null) {
+                        showCalendarDialog(calendars)
+                    }
+                }
+            } catch (e: Exception) {
+                runOnUiThread {
+                    Toast.makeText(this, "Error fetching calendar list: ${e.message}", Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+        thread.start()
+    }
+
+    private fun showCalendarDialog(calendars: List<CalendarListEntry>) {
+        val calendarNames = calendars.map { it.summary }.toTypedArray()
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Choose a Calendar")
+        builder.setItems(calendarNames) { _, which ->
+            val selectedCalendarId = calendars[which].id
+            loadEventsFromGoogleCalendar(selectedCalendarId)
+        }
+        builder.show()
     }
 
     private fun getCalendarEvents() {
@@ -214,18 +244,17 @@ class MainActivity : AppCompatActivity() {
         thread.start()
     }
 
-    private fun loadEventsFromGoogleCalendar() {
+    private fun loadEventsFromGoogleCalendar(calendarId: String) {
         val selectedYear = activityViewModel.currentDate.year
         val selectedMonth = activityViewModel.currentDate.monthValue
-
-        auth.currentUser?.let {
-            CalendarDatabase.getUserPrimaryCalendar(it.uid) { hasPrimary ->
-                if (!hasPrimary) {
-                    Log.d("UserUtils", "!hasPrimary: $hasPrimary")
-                }
-            }
-        }
-        val calendarId = "primary"
+//
+//        auth.currentUser?.let {
+//            CalendarDatabase.getUserPrimaryCalendar(it.uid) { hasPrimary ->
+//                if (!hasPrimary) {
+//                    Log.d("UserUtils", "!hasPrimary: $hasPrimary")
+//                }
+//            }
+//        }
 
         fetchEventsFromCalendar(calendarId, selectedYear, selectedMonth)
     }
@@ -278,7 +307,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-
     fun setupCalendarView() {
         val calendarRecycleView = findViewById<RecyclerView>(R.id.rvCalendar)
         calendarRecycleView.layoutManager = GridLayoutManager(this, 7)
@@ -296,7 +324,6 @@ class MainActivity : AppCompatActivity() {
             )
         }
     }
-
 
     @SuppressLint("SetTextI18n")
     private fun setupEventView(dateEvents: List<DateEvent>) {
