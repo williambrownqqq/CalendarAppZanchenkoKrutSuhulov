@@ -198,7 +198,4 @@ class EditEventActivity: AppCompatActivity() {
         dateTime = startDateTime
         setupUi()
     }
-
-
-
 }

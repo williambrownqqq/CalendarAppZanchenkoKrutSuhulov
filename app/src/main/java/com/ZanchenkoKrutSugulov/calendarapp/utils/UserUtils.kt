@@ -53,7 +53,7 @@ fun updateUserAfterGoogleRegister(firebaseUser: FirebaseUser?, account: GoogleSi
 
     CalendarDatabase.getUserPrimaryCalendar(firebaseUser.uid) { hasPrimary ->
         if (!hasPrimary) {
-            Log.d("UserUtils", "!hasPrimary: ${hasPrimary}")
+            Log.d("UserUtils", "!hasPrimary: $hasPrimary")
             createPrimaryCalendarForNewUser(firebaseUser.uid)
         }
     }
