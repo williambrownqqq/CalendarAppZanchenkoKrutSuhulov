@@ -17,7 +17,7 @@ class CreateEventViewModel(private val application: Application, val date: Zoned
 
     var eventName = ""
     var eventDescription = ""
-    var calendarId = ""
+    private var calendarId = ""
     var id: String? = null
 
     var day = date.dayOfMonth

@@ -3,6 +3,7 @@ package com.ZanchenkoKrutSugulov.calendarapp.recycleViews
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Build
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -34,6 +35,7 @@ class EventsRecycleViewAdapter(private val dateEvents: List<DateEvent>, private 
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun onEditClick(dateEvent: DateEvent) {
+        Log.d("EventsRecycleView", "!Event view - onEditClick")
         val intent = Intent(application, EditEventActivity::class.java)
         intent.putExtra("eventId", dateEvent.id)
         application.startActivity(intent)

@@ -6,6 +6,7 @@ import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.Spinner
 import androidx.annotation.RequiresApi
@@ -20,7 +21,6 @@ import com.ZanchenkoKrutSugulov.calendarapp.utils.getHourArray
 import com.ZanchenkoKrutSugulov.calendarapp.utils.getMinuteArray
 import com.ZanchenkoKrutSugulov.calendarapp.utils.getMonthsArray
 import com.ZanchenkoKrutSugulov.calendarapp.utils.getYearsArray
-import com.ZanchenkoKrutSugulov.calendarapp.viewModels.activities.CreateEventViewModel
 import com.google.firebase.database.FirebaseDatabase
 import java.time.ZonedDateTime
 import java.util.UUID
@@ -29,7 +29,6 @@ import java.util.UUID
 @RequiresApi(Build.VERSION_CODES.O)
 class CreateEventActivity : AppCompatActivity() {
 
-//    lateinit var activityViewModel: CreateEventViewModel
     private var startDateTime: ZonedDateTime = ZonedDateTime.now()
     private var dateTime: ZonedDateTime = startDateTime
 
@@ -47,26 +46,38 @@ class CreateEventActivity : AppCompatActivity() {
 
 
 
-    var eventName = ""
-    var eventDescription = ""
-    var calendarId = ""
+    private var eventName = ""
+    private var eventDescription = ""
+    private var calendarId = ""
     var id: String? = null
 
-    var day = dateTime.dayOfMonth
+    private var day = dateTime.dayOfMonth
     var month = dateTime.monthValue
     var year = dateTime.year
 
-    var hour: Int? = null
-    var minute: Int? = null
+    private var hour: Int? = null
+    private var minute: Int? = null
+
+
+    private lateinit var backButton: ImageView
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_event)
+
+
+        backButton = findViewById(R.id.backFromCreateEvent)
+
         setupViewModel()
 
         getIntentExtras()
         setupUi()
+
+
+        backButton.setOnClickListener {
+            finish()
+        }
     }
 
     private fun setupUi() {
@@ -90,8 +101,6 @@ class CreateEventActivity : AppCompatActivity() {
     }
 
     private fun setupViewModel() {
-//        activityViewModel = ViewModelProvider(this)[CreateEventViewModel::class.java]
-//        activityViewModel.setDateTime(dateTime)
         setDateTime(dateTime)
     }
 
@@ -164,8 +173,6 @@ class CreateEventActivity : AppCompatActivity() {
             hour = hourSpinner.selectedItem.toString().toInt()
             minute = minuteSpinner.selectedItem.toString().toInt()
         }
-
-//        activityViewModel.submitDateEvent()
 
 
         val dateEvent = createThisDateEvent()
