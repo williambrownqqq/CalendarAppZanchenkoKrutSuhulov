@@ -10,7 +10,6 @@ import java.time.ZonedDateTime
 
 @RequiresApi(Build.VERSION_CODES.O)
 fun localDateToEpochSecond(date: ZonedDateTime): Long {
-
     return date.toEpochSecond()
 }
 
