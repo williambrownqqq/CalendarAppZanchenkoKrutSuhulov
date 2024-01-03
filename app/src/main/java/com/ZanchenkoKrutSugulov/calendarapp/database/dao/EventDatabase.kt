@@ -28,11 +28,34 @@ object EventDatabase : DateEventDao {
         queryEvents(collection, callback)
     }
 
-    override fun getMonthEvents(year: Int, month: Int, callback: (List<DateEvent>) -> Unit) {
-        val query = collection.orderByChild("event_year").equalTo(year.toDouble())
-            .orderByChild("event_month").equalTo(month.toDouble())
-        queryEvents(query, callback)
-    }
+//    override fun getMonthEvents(year: Int, month: Int, callback: (List<DateEvent>) -> Unit) {
+//
+//        val query = collection.orderByChild("year").equalTo(year.toDouble())
+//
+//        Log.d("getMonthEvents", "!getMonthEvents: $query")
+//        queryEvents(query, callback)
+//    }
+override fun getMonthEvents(year: Int, month: Int, callback: (List<DateEvent>) -> Unit) {
+    collection.orderByChild("year").equalTo(year.toDouble()).addValueEventListener(object : ValueEventListener {
+        override fun onDataChange(snapshot: DataSnapshot) {
+            val events = snapshot.children.mapNotNull { it.getValue(DateEvent::class.java) }
+                .filter { it.month == month }
+            callback(events)
+        }
+
+        override fun onCancelled(error: DatabaseError) {
+            Log.e("FirebaseDateEventDao", "Error fetching events: ${error.message}")
+        }
+    })
+}
+
+
+
+//    override fun getMonthEvents(year: Int, month: Int, callback: (List<DateEvent>) -> Unit) {
+//        val query = collection.orderByChild("event_year").equalTo(year.toDouble())
+//            .orderByChild("event_month").equalTo(month.toDouble())
+//        queryEvents(query, callback)
+//    }
 
     override fun getDateEvents(
         year: Int,
@@ -58,6 +81,8 @@ object EventDatabase : DateEventDao {
         query.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val events = snapshot.children.mapNotNull { it.getValue(DateEvent::class.java) }
+                Log.d("getMonthEvents", "!getMonthEvents: ${events.map { it }}")
+
                 callback(events)
             }
 

@@ -16,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.map
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -41,6 +42,7 @@ class MainActivity : AppCompatActivity() {
     private var currentUser: FirebaseUser? = null
     private lateinit var activityViewModel: MainActivityViewModel
     private var monthEvents: LiveData<List<DateEvent>> = MutableLiveData()
+    var currentDate: ZonedDateTime = ZonedDateTime.now()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -66,22 +68,23 @@ class MainActivity : AppCompatActivity() {
             finish()
         }
 
-//        setupActivityViewModel()
-//        setupSpinners()
+        setupActivityViewModel()
+        setupSpinners()
 
     }
 
     override fun onStart() {
         super.onStart()
-//        getMonthEvents()
+        getMonthEvents()
     }
 
     private fun setupActivityViewModel() {
-        activityViewModel = ViewModelProvider(this)[MainActivityViewModel::class.java]
+//        activityViewModel = ViewModelProvider(this)[MainActivityViewModel::class.java]
         observeMonthEvents()
     }
     private fun observeMonthEvents() {
-        activityViewModel.monthEvents.observe(this) { dateEvents ->
+        Log.d("observeMonthEvents", "!monthEvents: ${monthEvents.map { it }}")
+        monthEvents.observe(this) { dateEvents ->
             if (dateEvents != null) {
                 setupCalendarView()
                 setupEventView(dateEvents)
@@ -92,15 +95,17 @@ class MainActivity : AppCompatActivity() {
     fun getMonthEvents() {
         Log.d("MainActivity", "!EVENTS getMonthEvents")
 //        activityViewModel.getMonthEvents()
-//        observeMonthEvents()
-        var currentDate: ZonedDateTime = ZonedDateTime.now()
         val year = currentDate.year
         val month = currentDate.monthValue
         val liveData = monthEvents as MutableLiveData
+        Log.d("MainActivityViewModel", "!EVENTS getMonthEvents")
 
         EventDatabase.getMonthEvents(year, month) { events ->
             liveData.postValue(events)
         }
+
+        Log.d("MainActivityViewModel", "!EVENTS getMonthEvents $monthEvents")
+        observeMonthEvents()
     }
 
     private fun setupSpinners() {
@@ -110,34 +115,40 @@ class MainActivity : AppCompatActivity() {
         monthSpinner.adapter = ArrayAdapter(this, R.layout.custom_spinner, getMonthsArray())
         yearSpinner.adapter = ArrayAdapter(this, R.layout.custom_spinner, getYearsArray())
 
-        monthSpinner.setSelection(activityViewModel.currentDate.monthValue - 1)
-        yearSpinner.setSelection(activityViewModel.currentDate.year - 2000)
+        Log.d("setupSpinners", "!setupSpinners ${monthSpinner.adapter}")
+        monthSpinner.setSelection(currentDate.monthValue - 1)
+        yearSpinner.setSelection(currentDate.year - 2000)
 
-//        monthSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-//            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-//                activityViewModel.currentDate = activityViewModel.currentDate.withMonth(position + 1)
-//                getMonthEvents()
-//            }
-//
-//            override fun onNothingSelected(parent: AdapterView<*>) {}
-//        }
-//
-//        yearSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-//            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-//                activityViewModel.currentDate = activityViewModel.currentDate.withYear(position + 2000)
-//                getMonthEvents()
-//            }
-//
-//            override fun onNothingSelected(parent: AdapterView<*>) {}
-//        }
+        monthSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+                currentDate = currentDate.withMonth(position + 1)
+
+                Log.d("setupSpinners", "!monthSpinner getMonthEvents ${monthSpinner.adapter}")
+                getMonthEvents()
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>) {}
+        }
+
+        yearSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+                currentDate = currentDate.withYear(position + 2000)
+                Log.d("setupSpinners", "!yearSpinner getMonthEvents ${monthSpinner.adapter}")
+                getMonthEvents()
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>) {}
+        }
     }
 
 
     fun setupCalendarView() {
         val calendarRecycleView = findViewById<RecyclerView>(R.id.rvCalendar)
         calendarRecycleView.layoutManager = GridLayoutManager(this, 7)
-        calendarRecycleView.adapter = activityViewModel.monthEvents.value?.let { dateEvents ->
-            CalendarRecycleViewAdapter(activityViewModel.currentDate, { calendarDay ->
+        Log.d("setupCalendarView", "!dateEvents: ${monthEvents.value}")
+
+        calendarRecycleView.adapter = monthEvents.value?.let { dateEvents ->
+            CalendarRecycleViewAdapter(currentDate, { calendarDay ->
                 calendarDayClick(
                     calendarDay
                 )
@@ -165,7 +176,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun updateRecyclerViewHeight(recyclerView: RecyclerView, dateEvents: List<DateEvent>) {
         val itemCountToShow = if (dateEvents.size <= 3) dateEvents.size else 3
-
 
         val scale = recyclerView.resources.displayMetrics.density
         recyclerView.layoutParams.height = (90 * itemCountToShow * scale * 2).toInt()
