@@ -2,6 +2,7 @@ package com.ZanchenkoKrutSugulov.calendarapp.viewModels.activities
 
 import android.app.Application
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -13,17 +14,28 @@ import java.time.ZonedDateTime
 @RequiresApi(Build.VERSION_CODES.O)
 class MainActivityViewModel(private val application: Application): ViewModel() {
 
-    @RequiresApi(Build.VERSION_CODES.O)
     var currentDate: ZonedDateTime = ZonedDateTime.now()
     var monthEvents: LiveData<List<DateEvent>> = MutableLiveData()
 
-    @RequiresApi(Build.VERSION_CODES.O)
     fun getMonthEvents() {
         val year = currentDate.year
         val month = currentDate.monthValue
         val liveData = monthEvents as MutableLiveData
+        Log.d("MainActivityViewModel", "!EVENTS getMonthEvents")
+
         EventDatabase.getMonthEvents(year, month) { events ->
             liveData.postValue(events)
         }
+
+        Log.d("MainActivityViewModel", "!EVENTS getMonthEvents $monthEvents")
     }
+//    private fun setupDateEventViewModel() {
+//        val dateEventDao = DateEventDatabase.getInstance(application).dateEventDao()
+//        val dateEventViewModelFactory = DateEventViewModelFactory(dateEventDao)
+//        dateEventViewModel = ViewModelProvider(
+//            activity,
+//            dateEventViewModelFactory
+//        )[DateEventViewModel::class.java]
+//    }
+
 }

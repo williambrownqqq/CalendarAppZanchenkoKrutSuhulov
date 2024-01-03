@@ -16,6 +16,7 @@ class CreateEventViewModel(private val application: Application, val date: Zoned
 
     var eventName = ""
     var eventDescription = ""
+    var calendarId = ""
     var id: String? = null
 
     var day = date.dayOfMonth
@@ -34,7 +35,8 @@ class CreateEventViewModel(private val application: Application, val date: Zoned
             hour,
             minute,
             eventName,
-            eventDescription
+            eventDescription,
+            calendarId
         )
     }
     fun setDateTime(dateTime: ZonedDateTime) {

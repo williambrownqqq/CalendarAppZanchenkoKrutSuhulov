@@ -1,5 +1,6 @@
 package com.ZanchenkoKrutSugulov.calendarapp.recycleViews
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Build
 import android.view.LayoutInflater
@@ -43,6 +44,7 @@ class EventsRecycleViewAdapter(private val dateEvents: List<DateEvent>, private 
 }
 
 class EventsRecycleViewHolder(private val view: View): RecyclerView.ViewHolder(view) {
+    @SuppressLint("SetTextI18n")
     fun bind(dateEvent: DateEvent, onClearClick: (dateEvent: DateEvent) -> Unit, onEditClick: (dateEvent: DateEvent) -> Unit) {
         val nameTextView = view.findViewById<TextView>(R.id.tvEventName)
         val descTextView = view.findViewById<TextView>(R.id.tvEventDesc)

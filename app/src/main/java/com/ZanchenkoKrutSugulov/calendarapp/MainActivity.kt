@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
@@ -12,12 +13,15 @@ import android.widget.Spinner
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.ZanchenkoKrutSugulov.calendarapp.dataClasses.CalendarDay
 import com.ZanchenkoKrutSugulov.calendarapp.dataClasses.DateEvent
+import com.ZanchenkoKrutSugulov.calendarapp.database.dao.EventDatabase
 import com.ZanchenkoKrutSugulov.calendarapp.recycleViews.CalendarRecycleViewAdapter
 import com.ZanchenkoKrutSugulov.calendarapp.recycleViews.EventsRecycleViewAdapter
 import com.ZanchenkoKrutSugulov.calendarapp.utils.getMonthsArray
@@ -27,6 +31,7 @@ import com.ZanchenkoKrutSugulov.calendarapp.viewModels.activities.MainActivityVi
 import com.ZanchenkoKrutSugulov.calendarapp.viewModels.activities.DateEventViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import java.time.ZonedDateTime
 
 @RequiresApi(Build.VERSION_CODES.O)
 class MainActivity : AppCompatActivity() {
@@ -35,6 +40,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var buttonMenu: ImageButton
     private var currentUser: FirebaseUser? = null
     private lateinit var activityViewModel: MainActivityViewModel
+    private var monthEvents: LiveData<List<DateEvent>> = MutableLiveData()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,14 +66,14 @@ class MainActivity : AppCompatActivity() {
             finish()
         }
 
-        setupActivityViewModel()
-        setupSpinners()
+//        setupActivityViewModel()
+//        setupSpinners()
 
     }
 
     override fun onStart() {
         super.onStart()
-        getMonthEvents()
+//        getMonthEvents()
     }
 
     private fun setupActivityViewModel() {
@@ -84,40 +90,46 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun getMonthEvents() {
-        activityViewModel.getMonthEvents()
-        observeMonthEvents()
+        Log.d("MainActivity", "!EVENTS getMonthEvents")
+//        activityViewModel.getMonthEvents()
+//        observeMonthEvents()
+        var currentDate: ZonedDateTime = ZonedDateTime.now()
+        val year = currentDate.year
+        val month = currentDate.monthValue
+        val liveData = monthEvents as MutableLiveData
+
+        EventDatabase.getMonthEvents(year, month) { events ->
+            liveData.postValue(events)
+        }
     }
 
     private fun setupSpinners() {
         val monthSpinner = findViewById<Spinner>(R.id.spnMonth)
         val yearSpinner = findViewById<Spinner>(R.id.spnYear)
 
-        val monthsAdapter = ArrayAdapter(this, R.layout.custom_spinner, getMonthsArray())
-        val yearAdapter = ArrayAdapter(this, R.layout.custom_spinner, getYearsArray())
-
-        monthSpinner.adapter = monthsAdapter
-        yearSpinner.adapter = yearAdapter
+        monthSpinner.adapter = ArrayAdapter(this, R.layout.custom_spinner, getMonthsArray())
+        yearSpinner.adapter = ArrayAdapter(this, R.layout.custom_spinner, getYearsArray())
 
         monthSpinner.setSelection(activityViewModel.currentDate.monthValue - 1)
         yearSpinner.setSelection(activityViewModel.currentDate.year - 2000)
 
-        monthSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-                activityViewModel.currentDate = activityViewModel.currentDate.withMonth(position + 1)
-                getMonthEvents()
-            }
-
-            override fun onNothingSelected(parent: AdapterView<*>) {}
-        }
-
-        yearSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-                activityViewModel.currentDate = activityViewModel.currentDate.withYear(position + 2000)
-                getMonthEvents()
-            }
-
-            override fun onNothingSelected(parent: AdapterView<*>) {}
-        }
+//        monthSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+//            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+//                activityViewModel.currentDate = activityViewModel.currentDate.withMonth(position + 1)
+//                getMonthEvents()
+//            }
+//
+//            override fun onNothingSelected(parent: AdapterView<*>) {}
+//        }
+//
+//        yearSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+//            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+//                activityViewModel.currentDate = activityViewModel.currentDate.withYear(position + 2000)
+//                getMonthEvents()
+//            }
+//
+//            override fun onNothingSelected(parent: AdapterView<*>) {}
+//        }
     }
 
 

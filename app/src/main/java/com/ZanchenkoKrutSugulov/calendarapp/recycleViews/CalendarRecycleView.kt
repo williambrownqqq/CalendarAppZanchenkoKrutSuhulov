@@ -104,13 +104,11 @@ class CalendarRecycleViewHolder(private val view: View, private val currentDate:
 
     fun bindCurrentDayWithEvent(calendarDay: CalendarDay, calendarDayClickListener: (calendarDay: CalendarDay) -> Unit, currentDate: ZonedDateTime, eventCurrentDateColorState: ColorStateList) {
         val button = bind(calendarDay, calendarDayClickListener, currentDate)
-
         button.backgroundTintList = eventCurrentDateColorState
     }
 
     fun bindEventDate(calendarDay: CalendarDay, calendarDayClickListener: (calendarDay: CalendarDay) -> Unit, currentDate: ZonedDateTime, selectedColorState:ColorStateList) {
         val button = bind(calendarDay, calendarDayClickListener, currentDate)
-
         button.backgroundTintList = selectedColorState
     }
 }

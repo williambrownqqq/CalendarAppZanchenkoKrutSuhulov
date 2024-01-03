@@ -9,6 +9,6 @@ data class DateEvent(
     var hour: Int?,
     var minute: Int?,
     var name: String,
-    var description: String?
-
+    var description: String?,
+    var calendarId: String?
 )
