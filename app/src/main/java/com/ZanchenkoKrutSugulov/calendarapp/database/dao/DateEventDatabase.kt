@@ -6,21 +6,27 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.ZanchenkoKrutSugulov.calendarapp.dataClasses.db.DateEvent
 import com.ZanchenkoKrutSugulov.calendarapp.database.dao.DateEventDao
+import com.ZanchenkoKrutSugulov.calendarapp.firebaseDB.FirebaseRealTimeDatabase
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
+object DateEventDatabase {
 
-@Database(entities=[DateEvent::class], version = 1, exportSchema = false)
-abstract class DateEventDatabase: RoomDatabase() {
-    abstract fun dateEventDao(): DateEventDao
-    companion object {
+    private val database = FirebaseDatabase.getInstance()
+    private val auth: FirebaseAuth = FirebaseAuth.getInstance()
+    private val dateEventReference: DatabaseReference = database.reference.child("date_events").child(auth.currentUser?.uid ?: "")
+
+    fun dateEventDao(): DateEventDao {
+        return FirebaseRealTimeDatabase
+    }
         @Volatile
         private var INSTANCE: DateEventDatabase? = null
-        fun getInstance(context: Context): DateEventDatabase {
-            synchronized(this) {
-                var instance = INSTANCE
-                if (instance == null)
-                    instance = Room.databaseBuilder(context.applicationContext, DateEventDatabase::class.java, "date_database").build()
 
-                return instance
+        fun getInstance(): DateEventDatabase {
+            return INSTANCE ?: synchronized(this) {
+                val instance = DateEventDatabase
+                INSTANCE = instance
+                instance
             }
         }
     }
-}

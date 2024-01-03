@@ -1,33 +1,13 @@
 package com.ZanchenkoKrutSugulov.calendarapp.dataClasses.db
 
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.PrimaryKey
-
-@Entity(tableName = "date_event_table")
 data class DateEvent(
-    @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = "event_id")
-    var id: Int,
-
-    @ColumnInfo(name = "event_year")
-    var year: Int,
-    @ColumnInfo(name = "event_month")
-    var month: Int,
-    @ColumnInfo(name = "event_day")
-    var day: Int,
-
-    @ColumnInfo(name = "event_hour")
-    var hour: Int?,
-    @ColumnInfo(name = "event_minute")
-    var minute: Int?,
-
-    @ColumnInfo(name = "event_name")
-    var name: String,
-    @ColumnInfo(name = "event_description")
-    var description: String?,
-
-    @ColumnInfo(name = "calendarId")
-    var calendarId: Int?
-
+    var id: Int = "", // Use String as ID for Firebase
+    var year: Int = 0,
+    var month: Int = 0,
+    var day: Int = 0,
+    var hour: Int? = null,
+    var minute: Int? = null,
+    var name: String = "",
+    var description: String? = "",
+    var calendarId: Int? = 0
 )

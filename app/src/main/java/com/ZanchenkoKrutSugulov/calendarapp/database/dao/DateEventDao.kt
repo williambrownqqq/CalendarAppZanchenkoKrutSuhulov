@@ -7,30 +7,12 @@ import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
 import com.ZanchenkoKrutSugulov.calendarapp.dataClasses.db.DateEvent
+import com.google.firebase.database.ValueEventListener
 
-@Dao
 interface DateEventDao {
-    @Insert
-    suspend fun insertDateEvent(dateEvent: DateEvent)
-
-    @Update
-    suspend fun updateDateEvent(dateEvent: DateEvent)
-
-    @Delete
-    suspend fun deleteDateEvent(dateEvent: DateEvent)
-
-    @Query("SELECT * FROM date_event_table")
-    fun getAllDateEvents(): LiveData<List<DateEvent>>
-
-    @Query("SELECT * FROM date_event_table WHERE event_year = :year AND event_month = :month ORDER BY event_day ASC")
-    fun getMonthEvents(year: Int, month: Int): LiveData<List<DateEvent>>
-
-    @Query("SELECT * FROM date_event_table WHERE event_day = :day AND event_month = :month AND event_year = :year ORDER BY event_day ASC, event_month ASC, event_year ASC")
-    fun getDateEvents(year: Int, month: Int, day: Int): LiveData<List<DateEvent>>
-
-    @Query("SELECT * FROM date_event_table WHERE event_id = :eventId")
-    fun getDateEvent(eventId: Int): LiveData<DateEvent>
-
-    @Query("SELECT * FROM date_event_table WHERE calendarId = :calendarId")
-    fun getEventsForCalendar(calendarId: String): List<DateEvent>
+    suspend fun saveDateEvent(dateEvent: DateEvent)
+    suspend fun updateDateEvent(eventId: String, updatedDateEvent: DateEvent)
+    suspend fun deleteDateEvent(eventId: String)
+    suspend fun getAllDateEvents(listener: ValueEventListener)
+    suspend fun getDateEvent(eventId: String, listener: ValueEventListener)
 }

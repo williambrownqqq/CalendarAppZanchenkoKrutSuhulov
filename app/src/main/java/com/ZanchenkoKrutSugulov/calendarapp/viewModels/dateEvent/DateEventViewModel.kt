@@ -16,17 +16,17 @@ import java.time.ZonedDateTime
 class DateEventViewModel(private val dateEventDao: DateEventDao): ViewModel() {
 
     fun insertDateEvent(dateEvent: DateEvent) = viewModelScope.launch {
-        dateEventDao.insertDateEvent(dateEvent)
+        dateEventDao.insertDateEvent(dateEvent.id.toString())
         saveDateEventToFirebase(dateEvent)
     }
 
     fun deleteDateEvent(dateEvent: DateEvent) = viewModelScope.launch {
-        dateEventDao.deleteDateEvent(dateEvent)
+        dateEventDao.deleteDateEvent(dateEvent.id.toString())
         deleteDateEventFromFirebase(dateEvent.id.toString())
     }
 
     fun updateDateEvent(dateEvent:DateEvent) = viewModelScope.launch {
-        dateEventDao.updateDateEvent(dateEvent)
+        dateEventDao.updateDateEvent(dateEvent.id.toString(), dateEvent))
         updateDateEventInFirebase(dateEvent.id.toString(), dateEvent)
     }
 

@@ -13,6 +13,7 @@ import com.ZanchenkoKrutSugulov.calendarapp.viewModels.dateEvent.DateEventViewMo
 import com.ZanchenkoKrutSugulov.calendarapp.viewModels.dateEvent.DateEventViewModelFactory
 import kotlinx.coroutines.launch
 import java.time.ZonedDateTime
+import com.ZanchenkoKrutSugulov.calendarapp.firebaseDB.FirebaseRealTimeDatabase
 
 @RequiresApi(Build.VERSION_CODES.O)
 class CreateEventViewModel(private val application: Application, private val activity: AppCompatActivity, val date: ZonedDateTime): ViewModel() {
@@ -36,7 +37,7 @@ class CreateEventViewModel(private val application: Application, private val act
     }
 
     private fun setupDateEventViewModel() {
-        val dateEventDao = DateEventDatabase.getInstance(application).dateEventDao()
+        val dateEventDao = DateEventDatabase.getInstance().dateEventDao()
         val dateEventViewModelFactory = DateEventViewModelFactory(dateEventDao)
         dateEventViewModel = ViewModelProvider(
             activity,
