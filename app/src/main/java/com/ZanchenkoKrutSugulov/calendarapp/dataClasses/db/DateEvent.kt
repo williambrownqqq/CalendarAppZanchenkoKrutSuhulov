@@ -14,7 +14,7 @@ data class DateEvent(
     @ColumnInfo(name = "event_year")
     var year: Int,
     @ColumnInfo(name = "event_month")
-    var month: Month,
+    var month: Int,
     @ColumnInfo(name = "event_day")
     var day: Int,
 

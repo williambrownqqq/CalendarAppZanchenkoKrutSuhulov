@@ -9,6 +9,7 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.AdapterView.OnItemSelectedListener
 import android.widget.ArrayAdapter
+import android.widget.Button
 import android.widget.ImageButton
 import android.widget.Spinner
 import android.widget.TextView
@@ -60,6 +61,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
     private lateinit var buttonShowProfile: ImageButton
     private lateinit var buttonMenu: ImageButton
+    private lateinit var syncButton: Button
     private var currentUser: FirebaseUser? = null
     private lateinit var activityViewModel: MainActivityViewModel
     private var calendarService: Calendar? = null
@@ -72,6 +74,7 @@ class MainActivity : AppCompatActivity() {
         auth = FirebaseAuth.getInstance()
         buttonShowProfile = findViewById(R.id.buttonShowProfile)
         buttonMenu = findViewById(R.id.buttonOpenCalendars)
+        syncButton = findViewById(R.id.buttonSyncWithGoogle)
         currentUser = auth.currentUser
 
 
@@ -86,6 +89,10 @@ class MainActivity : AppCompatActivity() {
         if (currentUser == null) {
             startActivity(Intent(this, Login::class.java))
             finish()
+        }
+
+        syncButton.setOnClickListener {
+            getCalendarEvents()
         }
         setupGoogleCalendarApi()
 
@@ -135,6 +142,8 @@ class MainActivity : AppCompatActivity() {
             credential
         ).setApplicationName(getString(R.string.app_name))
             .build()
+        Log.d("!GOOGLE API", "!GOOGLE API SERVICE: ${calendarService}")
+
     }
 
     private fun getCalendarEvents() {
@@ -152,32 +161,8 @@ class MainActivity : AppCompatActivity() {
                 .setApplicationName(getString(R.string.app_name))
                 .build()
 
-            fetchCalendarEvents(calendarService, calendarId, selectedYear, selectedMonth)
+//            fetchEventsFromCalendar(calendarId, selectedYear, selectedMonth)
         }
-    }
-
-    private fun fetchCalendarEvents(
-        calendarService: Calendar,
-        calendarId: String,
-        selectedYear: Int,
-        selectedMonth: Int
-    ) {
-        val thread = Thread {
-            try {
-                val calendarList = calendarService.calendarList()?.list()?.execute()
-                runOnUiThread {
-                }
-            } catch (e: Exception) {
-                runOnUiThread {
-                    Toast.makeText(
-                        this,
-                        "Error fetching calendars: ${e.message}",
-                        Toast.LENGTH_LONG
-                    ).show()
-                }
-            }
-        }
-        thread.start()
     }
 
     private fun fetchEventsFromCalendar(calendarId: String, year: Int, month: Int) {
@@ -203,7 +188,7 @@ class MainActivity : AppCompatActivity() {
                             val newEvent = localDate?.let {
                                 DateEvent(
                                     year = it.year,
-                                    month = it.month,
+                                    month = it.month.value,
                                     day = it.dayOfMonth,
                                     hour = it.hour,
                                     minute = it.minute,
@@ -242,27 +227,9 @@ class MainActivity : AppCompatActivity() {
         }
         val calendarId = "primary"
 
-        fetchCalendarEvents(calendarService!!, calendarId, selectedYear, selectedMonth)
+        fetchEventsFromCalendar(calendarId, selectedYear, selectedMonth)
     }
 
-    private fun getFirstDayOfMonth(year: Int, month: Int): String {
-        val calendar = Calendar.getInstance()
-        calendar.set(Calendar.YEAR, year)
-        calendar.set(Calendar.MONTH, month - 1)
-        calendar.set(Calendar.DAY_OF_MONTH, 1)
-        val format = SimpleDateFormat("yyyy-MM-dd'T'00:00:00'Z'", Locale.getDefault())
-        return format.format(calendar.time)
-    }
-
-    private fun getLastDayOfMonth(year: Int, month: Int): String {
-        val calendar = Calendar.getInstance()
-        calendar.set(Calendar.YEAR, year)
-        calendar.set(Calendar.MONTH, month)
-        calendar.set(Calendar.DAY_OF_MONTH, 1)
-        calendar.add(Calendar.DAY_OF_MONTH, -1)
-        val format = SimpleDateFormat("yyyy-MM-dd'T'23:59:59'Z'", Locale.getDefault())
-        return format.format(calendar.time)
-    }
 
     private fun setupSpinners() {
         val monthSpinner = findViewById<Spinner>(R.id.spnMonth)
