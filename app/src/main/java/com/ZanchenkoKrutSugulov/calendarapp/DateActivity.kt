@@ -75,7 +75,20 @@ class DateActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        getDateEvents()
+        if (calendarId == "") {
+            FirebaseAuth.getInstance().currentUser?.let {
+                getPrimaryCalendarForUser(it.uid) { calendarEvent ->
+                    if (calendarEvent != null) {
+                        getDateEvents(calendarEvent.calendarId)
+                        Log.d("CalendarId", "Primary calendar ID: ${calendarEvent.calendarId}")
+                    } else {
+                        Log.e("CalendarError", "Primary calendar not found or error occurred")
+                    }
+                }
+            }
+        } else {
+            getDateEvents(calendarId)
+        }
     }
 
     private fun getIntentExtras(): Boolean {
@@ -119,8 +132,11 @@ class DateActivity : AppCompatActivity() {
         }
     }
 
-    private fun getDateEvents() {
-        EventDatabase.getDateEvents(date.year, date.monthValue, date.dayOfMonth, calendarId) { events ->
+    private fun getDateEvents(calendarId: String) {
+        Log.d("DateActivity", "!date events calendarId = ${this.calendarId}")
+        EventDatabase.getDateEvents(date.year, date.monthValue, date.dayOfMonth,
+            this.calendarId
+        ) { events ->
             _dateEvents.postValue(events)
         }
     }

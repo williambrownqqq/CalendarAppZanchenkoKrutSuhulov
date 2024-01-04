@@ -75,10 +75,7 @@ class MainActivity : AppCompatActivity() {
             startActivity(Intent(this, Login::class.java))
             finish()
         }
-
-//        setupActivityViewModel()
         setupSpinners()
-
     }
 
     override fun onStart() {
@@ -100,8 +97,6 @@ class MainActivity : AppCompatActivity() {
         observeMonthEvents()
     }
     private fun observeMonthEvents() {
-        Log.d("observeMonthEvents", "!monthEvents: ${monthEvents.map { it }}")
-        Log.d("observeMonthEvents", "!monthEvents: calendarId $calendarId")
         monthEvents.observe(this) { dateEvents ->
             if (dateEvents != null) {
                 setupCalendarView()
