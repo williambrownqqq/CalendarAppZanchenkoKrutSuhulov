@@ -1,7 +1,9 @@
 package com.ZanchenkoKrutSugulov.calendarapp.recycleViews
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Build
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,10 +12,11 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.ZanchenkoKrutSugulov.calendarapp.R
-import com.ZanchenkoKrutSugulov.calendarapp.activities.EditEventActivity
-import com.ZanchenkoKrutSugulov.calendarapp.dataClasses.db.DateEvent
+import com.ZanchenkoKrutSugulov.calendarapp.EditEventActivity
+import com.ZanchenkoKrutSugulov.calendarapp.dataClasses.DateEvent
 
-class EventsRecycleViewAdapter(private val dateEvents: List<DateEvent>, private val application: AppCompatActivity, private val onClearClick: (dateEvent:DateEvent) -> Unit): RecyclerView.Adapter<EventsRecycleViewHolder>() {
+@RequiresApi(Build.VERSION_CODES.O)
+class EventsRecycleViewAdapter(private val dateEvents: List<DateEvent>, private val application: AppCompatActivity, private val onClearClick: (dateEvent: DateEvent) -> Unit): RecyclerView.Adapter<EventsRecycleViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EventsRecycleViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
         val view = layoutInflater.inflate(R.layout.list_date_events, parent, false)
@@ -24,23 +27,23 @@ class EventsRecycleViewAdapter(private val dateEvents: List<DateEvent>, private 
         return dateEvents.size
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: EventsRecycleViewHolder, position: Int) {
         holder.bind(dateEvents[position], onClearClick) { dateEvent ->
             onEditClick(dateEvent)
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     private fun onEditClick(dateEvent: DateEvent) {
+        Log.d("EventsRecycleView", "!edit Event view - onEditClick - dateEvent $dateEvent")
+        Log.d("EventsRecycleView", "!edit Event view - onEditClick - dateEvent ${dateEvent.id}")
         val intent = Intent(application, EditEventActivity::class.java)
-        intent.putExtra("eventId", dateEvent.id)
+        intent.putExtra("id", dateEvent.id)
         application.startActivity(intent)
     }
-
 }
 
 class EventsRecycleViewHolder(private val view: View): RecyclerView.ViewHolder(view) {
+    @SuppressLint("SetTextI18n")
     fun bind(dateEvent: DateEvent, onClearClick: (dateEvent: DateEvent) -> Unit, onEditClick: (dateEvent: DateEvent) -> Unit) {
         val nameTextView = view.findViewById<TextView>(R.id.tvEventName)
         val descTextView = view.findViewById<TextView>(R.id.tvEventDesc)

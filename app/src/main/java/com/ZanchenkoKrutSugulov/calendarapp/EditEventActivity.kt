@@ -1,7 +1,8 @@
-package com.ZanchenkoKrutSugulov.calendarapp.activities
+package com.ZanchenkoKrutSugulov.calendarapp
 
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Button
@@ -11,23 +12,24 @@ import android.widget.Spinner
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.switchmaterial.SwitchMaterial
-import com.ZanchenkoKrutSugulov.calendarapp.R
-import com.ZanchenkoKrutSugulov.calendarapp.dataClasses.db.DateEvent
+import com.ZanchenkoKrutSugulov.calendarapp.dataClasses.DateEvent
+import com.ZanchenkoKrutSugulov.calendarapp.database.dao.EventDatabase
 import com.ZanchenkoKrutSugulov.calendarapp.utils.getDaysArray
 import com.ZanchenkoKrutSugulov.calendarapp.utils.getHourArray
 import com.ZanchenkoKrutSugulov.calendarapp.utils.getMinuteArray
 import com.ZanchenkoKrutSugulov.calendarapp.utils.getMonthsArray
 import com.ZanchenkoKrutSugulov.calendarapp.utils.getYearsArray
-import com.ZanchenkoKrutSugulov.calendarapp.viewModels.activities.createEventActivity.CreateEventViewModel
-import com.ZanchenkoKrutSugulov.calendarapp.viewModels.activities.createEventActivity.CreateEventViewModelFactory
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import java.time.ZoneId
 import java.time.ZonedDateTime
+import java.util.UUID
 
 @RequiresApi(Build.VERSION_CODES.O)
-class EditEventActivity: AppCompatActivity() {
-    private lateinit var activityViewModel: CreateEventViewModel
+class EditEventActivity : AppCompatActivity() {
     private var startDateTime: ZonedDateTime = ZonedDateTime.now()
     private var dateTime: ZonedDateTime = startDateTime
 
@@ -43,6 +45,19 @@ class EditEventActivity: AppCompatActivity() {
     private var dateEvent: DateEvent? = null
     private var useTime = false
 
+
+    private var eventName = ""
+    private var eventDescription = ""
+    private var calendarId = ""
+    var id: String? = null
+
+    private var day = dateTime.dayOfMonth
+    var month = dateTime.monthValue
+    var year = dateTime.year
+
+    private var hour: Int? = null
+    private var minute: Int? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_event)
@@ -52,25 +67,54 @@ class EditEventActivity: AppCompatActivity() {
         getEventInformation()
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     private fun getIntentExtras() {
         if (intent == null) return
+        id = intent.getStringExtra("id")
+        Log.d("EditEventActivity", "!edit event - getIntentExtras id ${id}")
 
-        activityViewModel.eventId = intent.getIntExtra("eventId" ,-1)
     }
 
     private fun getEventInformation() {
-        if (activityViewModel.eventId == null) return
+        val eventId = id ?: return
 
-        val result = activityViewModel.dateEventViewModel.getEvent(activityViewModel.eventId!!)
-        result.observe(this) {dateEvent ->
-            onDateEventLoad(dateEvent)
+        getEventFromFirebase(eventId) { dateEvent ->
+            runOnUiThread {
+
+                Log.d("EditEventActivity", "!edit event - getEventInformation ${dateEvent}")
+
+                if (dateEvent != null) {
+                    onDateEventLoad(dateEvent)
+                }
+            }
         }
     }
 
+    private fun getEventFromFirebase(eventId: String, callback: (DateEvent?) -> Unit) {
+        val database = FirebaseDatabase.getInstance()
+        val eventRef = database.getReference("date_events")
+        val query = eventRef.orderByChild("id").equalTo(eventId)
+
+        query.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val dateEvent = dataSnapshot.children.firstOrNull()?.getValue(DateEvent::class.java)
+                callback(dateEvent)
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                Log.e("EditEventActivity", "Error getting event: ${databaseError.message}")
+                callback(null)
+            }
+        })
+    }
+
+
     private fun onDateEventLoad(dateEvent: DateEvent) {
-        if (dateEvent == null) return
         this.dateEvent = dateEvent
+
+        Log.d("EditEventActivity", "!edit event - onDateEventLoad  ${dateEvent.id} - ${this.dateEvent}")
+//        id = dateEvent.id
+
+        Log.d("EditEventActivity", "!edit event: ${this.dateEvent}")
 
         if (dateEvent.hour != null || dateEvent.minute != null) useTime = true
 
@@ -106,6 +150,7 @@ class EditEventActivity: AppCompatActivity() {
         val tvCreateEvent = findViewById<TextView>(R.id.tvCreateEvent)
         tvCreateEvent.text = resources.getString(R.string.edit_event)
     }
+
     private fun setupEditText() {
         nameEditText = findViewById(R.id.etEventName)
         descriptionEditText = findViewById(R.id.etEventDescription)
@@ -115,12 +160,9 @@ class EditEventActivity: AppCompatActivity() {
     }
 
     private fun setupViewModel() {
-        val factory = CreateEventViewModelFactory(application, this, dateTime)
-        activityViewModel = ViewModelProvider(
-            this,
-            factory
-        )[CreateEventViewModel::class.java]
+        getEventInformation()
     }
+
     private fun setupSpinners() {
         daySpinner = findViewById(R.id.spnDay)
         monthSpinner = findViewById(R.id.spnMonth)
@@ -128,7 +170,8 @@ class EditEventActivity: AppCompatActivity() {
         hourSpinner = findViewById(R.id.spnHour)
         minuteSpinner = findViewById(R.id.spnMinute)
 
-        val dayAdapter = ArrayAdapter(this, R.layout.custom_spinner, getDaysArray(dateTime.toLocalDate()))
+        val dayAdapter =
+            ArrayAdapter(this, R.layout.custom_spinner, getDaysArray(dateTime.toLocalDate()))
         val monthAdapter = ArrayAdapter(this, R.layout.custom_spinner, getMonthsArray())
         val yearAdapter = ArrayAdapter(this, R.layout.custom_spinner, getYearsArray())
         val hourAdapter = ArrayAdapter(this, R.layout.custom_spinner, getHourArray())
@@ -141,8 +184,8 @@ class EditEventActivity: AppCompatActivity() {
         minuteSpinner.adapter = minuteAdapter
 
         daySpinner.setSelection(dateTime.dayOfMonth - 1)
-        monthSpinner.setSelection(activityViewModel.date.monthValue - 1)
-        yearSpinner.setSelection(activityViewModel.date.year - 2000)
+        monthSpinner.setSelection(dateTime.monthValue - 1)
+        yearSpinner.setSelection(dateTime.year - 2000)
         hourSpinner.setSelection(dateTime.hour)
         minuteSpinner.setSelection(dateTime.minute)
     }
@@ -178,20 +221,41 @@ class EditEventActivity: AppCompatActivity() {
     }
 
     private fun saveButtonClick() {
-        activityViewModel.eventName = nameEditText.text.toString()
-        activityViewModel.eventDescription = descriptionEditText.text.toString()
+        eventName = nameEditText.text.toString()
+        eventDescription = descriptionEditText.text.toString()
 
-        activityViewModel.year = yearSpinner.selectedItem.toString().toInt()
-        activityViewModel.month = monthSpinner.selectedItemPosition + 1
-        activityViewModel.day = daySpinner.selectedItem.toString().toInt()
+        year = yearSpinner.selectedItem.toString().toInt()
+        month = monthSpinner.selectedItemPosition + 1
+        day = daySpinner.selectedItem.toString().toInt()
 
         if (useTime) {
-            activityViewModel.hour = hourSpinner.selectedItem.toString().toInt()
-            activityViewModel.minute = minuteSpinner.selectedItem.toString().toInt()
+            hour = hourSpinner.selectedItem.toString().toInt()
+            minute = minuteSpinner.selectedItem.toString().toInt()
         }
 
-        activityViewModel.submitDateEvent()
+        val dateEvent = createThisDateEvent()
+        if (this.dateEvent?.id.isNullOrEmpty()) {
+            Log.d("EditEventActivity", "!edit event: id.isNullOrEmpty() -  ${id}")
+            EventDatabase.insertDateEvent(dateEvent)
+        } else {
+            Log.d("EditEventActivity", "!edit event: id - ${id}")
+            EventDatabase.updateDateEvent(this.dateEvent?.id!!, dateEvent)
+        }
         this.finish()
+    }
+
+    private fun createThisDateEvent(): DateEvent {
+        return DateEvent(
+            this.dateEvent?.id ?: UUID.randomUUID().toString(),
+            year,
+            month,
+            day,
+            hour,
+            minute,
+            eventName,
+            eventDescription,
+            calendarId
+        )
     }
 
     private fun resetButtonClick() {

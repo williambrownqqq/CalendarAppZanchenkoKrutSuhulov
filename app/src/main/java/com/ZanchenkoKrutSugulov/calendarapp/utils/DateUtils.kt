@@ -29,7 +29,20 @@ fun getYearsArray(): Array<Int> {
 
 
 fun getMonthsArray(): Array<String> {
-    return arrayOf("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December")
+    return arrayOf(
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December"
+    )
 }
 
 fun getDaysOfWeekArray(): Array<String> {
@@ -53,15 +66,13 @@ fun getCalendarDays(date: ZonedDateTime): List<CalendarDay> {
 
     for (i in 0..41) {
         if (i < firstDayMonth.dayOfWeek.value) {
-            // last Month
             daysList.add(
                 CalendarDay(
-                lastDayMonth.minusDays((firstDayMonth.dayOfWeek.value - i - 1).toLong())
-            )
+                    lastDayMonth.minusDays((firstDayMonth.dayOfWeek.value - i - 1).toLong())
+                )
             )
             continue
         }
-        // current month
         daysList.add(CalendarDay(firstDayMonth.plusDays((i - firstDayMonth.dayOfWeek.value).toLong())))
     }
     return daysList
