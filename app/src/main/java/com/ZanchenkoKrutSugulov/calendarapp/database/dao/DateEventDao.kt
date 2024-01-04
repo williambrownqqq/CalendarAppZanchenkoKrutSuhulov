@@ -9,7 +9,13 @@ interface DateEventDao {
     fun getAllEvents(callback: (List<DateEvent>) -> Unit)
     fun getMonthEvents(year: Int, month: Int, callback: (List<DateEvent>) -> Unit)
     fun getDateEvent(eventId: String, callback: (DateEvent?) -> Unit)
-    fun getDateEvents(year: Int, month: Int, day: Int, callback: (List<DateEvent>) -> Unit)
+    fun getDateEvents(
+        year: Int,
+        month: Int,
+        day: Int,
+        calendarId: String,
+        callback: (List<DateEvent>) -> Unit
+    )
 }
 
 //interface DateEventDao {
