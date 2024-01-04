@@ -19,7 +19,9 @@ import com.ZanchenkoKrutSugulov.calendarapp.utils.getDaysArray
 import com.ZanchenkoKrutSugulov.calendarapp.utils.getHourArray
 import com.ZanchenkoKrutSugulov.calendarapp.utils.getMinuteArray
 import com.ZanchenkoKrutSugulov.calendarapp.utils.getMonthsArray
+import com.ZanchenkoKrutSugulov.calendarapp.utils.getPrimaryCalendarForUser
 import com.ZanchenkoKrutSugulov.calendarapp.utils.getYearsArray
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -27,6 +29,7 @@ import com.google.firebase.database.ValueEventListener
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.util.UUID
+
 
 @RequiresApi(Build.VERSION_CODES.O)
 class EditEventActivity : AppCompatActivity() {
@@ -52,8 +55,8 @@ class EditEventActivity : AppCompatActivity() {
     var id: String? = null
 
     private var day = dateTime.dayOfMonth
-    var month = dateTime.monthValue
-    var year = dateTime.year
+    private var month = dateTime.monthValue
+    private var year = dateTime.year
 
     private var hour: Int? = null
     private var minute: Int? = null
@@ -63,6 +66,16 @@ class EditEventActivity : AppCompatActivity() {
         setContentView(R.layout.activity_create_event)
         setupViewModel()
 
+        FirebaseAuth.getInstance().currentUser?.let {
+            getPrimaryCalendarForUser(it.uid) { calendarEvent ->
+                if (calendarEvent != null) {
+                    calendarId = calendarEvent.calendarId
+                    Log.d("CalendarId", "Primary calendar ID: $calendarId")
+                } else {
+                    Log.e("CalendarError", "Primary calendar not found or error occurred")
+                }
+            }
+        }
         getIntentExtras()
         getEventInformation()
     }
@@ -233,12 +246,27 @@ class EditEventActivity : AppCompatActivity() {
             minute = minuteSpinner.selectedItem.toString().toInt()
         }
 
+        if (calendarId == "") {
+            FirebaseAuth.getInstance().currentUser?.let {
+                getPrimaryCalendarForUser(it.uid) { calendarEvent ->
+                    if (calendarEvent != null) {
+                        calendarId = calendarEvent.calendarId
+                        Log.d("CalendarId", "Primary calendar ID: $calendarId")
+                    } else {
+                        Log.e("CalendarError", "Primary calendar not found or error occurred")
+                    }
+                }
+            }
+        }
         val dateEvent = createThisDateEvent()
+
+        Log.d("EditEventActivity", "!edit event: dateEvent = createThisDateEvent() -  ${dateEvent}")
+
         if (this.dateEvent?.id.isNullOrEmpty()) {
-            Log.d("EditEventActivity", "!edit event: id.isNullOrEmpty() -  ${id}")
+            Log.d("EditEventActivity", "!edit event: id.isNullOrEmpty() -  ${this.dateEvent?.id}")
             EventDatabase.insertDateEvent(dateEvent)
         } else {
-            Log.d("EditEventActivity", "!edit event: id - ${id}")
+            Log.d("EditEventActivity", "!edit event: id - ${this.dateEvent?.id}")
             EventDatabase.updateDateEvent(this.dateEvent?.id!!, dateEvent)
         }
         this.finish()
