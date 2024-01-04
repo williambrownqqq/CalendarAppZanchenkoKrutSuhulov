@@ -15,7 +15,6 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.map
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -26,6 +25,7 @@ import com.ZanchenkoKrutSugulov.calendarapp.database.dao.EventDatabase
 import com.ZanchenkoKrutSugulov.calendarapp.recycleViews.CalendarRecycleViewAdapter
 import com.ZanchenkoKrutSugulov.calendarapp.recycleViews.EventsRecycleViewAdapter
 import com.ZanchenkoKrutSugulov.calendarapp.utils.getMonthsArray
+import com.ZanchenkoKrutSugulov.calendarapp.utils.getPrimaryCalendarForUser
 import com.ZanchenkoKrutSugulov.calendarapp.utils.getYearsArray
 import com.ZanchenkoKrutSugulov.calendarapp.utils.localDateToEpochSecond
 import com.google.firebase.auth.FirebaseAuth
@@ -41,6 +41,7 @@ class MainActivity : AppCompatActivity() {
     private var monthEvents: LiveData<List<DateEvent>> = MutableLiveData()
     var currentDate: ZonedDateTime = ZonedDateTime.now()
 
+    private var calendarId = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,6 +52,16 @@ class MainActivity : AppCompatActivity() {
         buttonMenu = findViewById(R.id.buttonOpenCalendars)
         currentUser = auth.currentUser
 
+        currentUser?.let {
+            getPrimaryCalendarForUser(it.uid) { calendarEvent ->
+                if (calendarEvent != null) {
+                    calendarId = calendarEvent.calendarId
+                    Log.d("CalendarId", "Primary calendar ID: $calendarId")
+                } else {
+                    Log.e("CalendarError", "Primary calendar not found or error occurred")
+                }
+            }
+        }
 
         buttonShowProfile.setOnClickListener {
             startActivity(Intent(this, UserProfileActivity::class.java))
@@ -65,22 +76,32 @@ class MainActivity : AppCompatActivity() {
             finish()
         }
 
-        setupActivityViewModel()
+//        setupActivityViewModel()
         setupSpinners()
 
     }
 
     override fun onStart() {
         super.onStart()
-        getMonthEvents()
-    }
-
-    private fun setupActivityViewModel() {
+        if (calendarId == "") {
+            FirebaseAuth.getInstance().currentUser?.let {
+                getPrimaryCalendarForUser(it.uid) { calendarEvent ->
+                    if (calendarEvent != null) {
+                        getMonthEvents(calendarEvent.calendarId)
+                        Log.d("CalendarId", "Primary calendar ID: ${calendarEvent.calendarId}")
+                    } else {
+                        Log.e("CalendarError", "Primary calendar not found or error occurred")
+                    }
+                }
+            }
+        } else {
+            getMonthEvents(calendarId)
+        }
         observeMonthEvents()
     }
-
     private fun observeMonthEvents() {
         Log.d("observeMonthEvents", "!monthEvents: ${monthEvents.map { it }}")
+        Log.d("observeMonthEvents", "!monthEvents: calendarId $calendarId")
         monthEvents.observe(this) { dateEvents ->
             if (dateEvents != null) {
                 setupCalendarView()
@@ -89,14 +110,20 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun getMonthEvents() {
+    fun getMonthEvents(calendarID: String) {
+
+
+        Log.d("getMonthEvents", "!monthEvents: ${monthEvents.map { it }}")
+        Log.d("getMonthEvents", "!monthEvents: calendarId ${this.calendarId}")
+
         val year = currentDate.year
         val month = currentDate.monthValue
         val liveData = monthEvents as MutableLiveData
 
-        EventDatabase.getMonthEvents(year, month) { events ->
+        EventDatabase.getMonthEvents(year, month, calendarID) { events ->
             liveData.postValue(events)
         }
+        Log.d("getMonthEvents", "!monthEvents: ${monthEvents.value?.map { it }}")
         observeMonthEvents()
     }
 
@@ -117,7 +144,7 @@ class MainActivity : AppCompatActivity() {
                 id: Long
             ) {
                 currentDate = currentDate.withMonth(position + 1)
-                getMonthEvents()
+                getMonthEvents(calendarId)
             }
 
             override fun onNothingSelected(parent: AdapterView<*>) {}
@@ -131,7 +158,7 @@ class MainActivity : AppCompatActivity() {
                 id: Long
             ) {
                 currentDate = currentDate.withYear(position + 2000)
-                getMonthEvents()
+                getMonthEvents(calendarId)
             }
 
             override fun onNothingSelected(parent: AdapterView<*>) {}
@@ -182,7 +209,6 @@ class MainActivity : AppCompatActivity() {
         intent.putExtra("date", localDateToEpochSecond(calendarDay.date))
         startActivity(intent)
     }
-
 
     private fun eventClearClick(dateEvent: DateEvent) {
         EventDatabase.deleteDateEvent(dateEvent.id)

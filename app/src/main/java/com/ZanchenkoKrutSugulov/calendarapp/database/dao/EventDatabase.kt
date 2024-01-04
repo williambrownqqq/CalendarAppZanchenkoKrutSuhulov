@@ -28,12 +28,17 @@ object EventDatabase : DateEventDao {
         queryEvents(collection, callback)
     }
 
-    override fun getMonthEvents(year: Int, month: Int, callback: (List<DateEvent>) -> Unit) {
+    override fun getMonthEvents(
+        year: Int,
+        month: Int,
+        calendarId: String,
+        callback: (List<DateEvent>) -> Unit
+    ) {
         collection.orderByChild("year").equalTo(year.toDouble())
             .addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val events = snapshot.children.mapNotNull { it.getValue(DateEvent::class.java) }
-                        .filter { it.month == month }
+                        .filter { it.month == month && it.calendarId == calendarId }
                     callback(events)
                 }
 
