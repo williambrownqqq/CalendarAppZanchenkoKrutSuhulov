@@ -84,7 +84,8 @@ class UserProfileActivity : AppCompatActivity() {
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(getString(R.string.default_web_client_id))
             .requestEmail()
-            .requestScopes(Scope(CalendarScopes.CALENDAR))
+            .requestScopes(Scope(CalendarScopes.CALENDAR_READONLY))
+            .requestScopes(Scope(CalendarScopes.CALENDAR_EVENTS_READONLY))
             .build()
 
         googleSignInClient = GoogleSignIn.getClient(this, gso)

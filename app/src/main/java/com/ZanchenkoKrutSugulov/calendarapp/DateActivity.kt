@@ -12,7 +12,6 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.map
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.ZanchenkoKrutSugulov.calendarapp.dataClasses.DateEvent
@@ -21,7 +20,10 @@ import com.ZanchenkoKrutSugulov.calendarapp.recycleViews.EventsRecycleViewAdapte
 import com.ZanchenkoKrutSugulov.calendarapp.utils.epochSecondToLocalDate
 import com.ZanchenkoKrutSugulov.calendarapp.utils.getDaysOfWeekArray
 import com.ZanchenkoKrutSugulov.calendarapp.utils.getMonthsArray
+import com.ZanchenkoKrutSugulov.calendarapp.utils.getPrimaryCalendarForUser
 import com.ZanchenkoKrutSugulov.calendarapp.utils.localDateToEpochSecond
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import java.time.ZonedDateTime
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -33,9 +35,28 @@ class DateActivity : AppCompatActivity() {
     private val dateEvents: LiveData<List<DateEvent>> = _dateEvents
 
 
+
+    private var calendarId = ""
+    private var currentUser: FirebaseUser? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_date)
+
+
+
+        currentUser = FirebaseAuth.getInstance().currentUser
+
+        currentUser?.let {
+            getPrimaryCalendarForUser(it.uid) { calendarEvent ->
+                if (calendarEvent != null) {
+                    calendarId = calendarEvent.calendarId
+                    Log.d("CalendarId", "Primary calendar ID: $calendarId")
+                } else {
+                    Log.e("CalendarError", "Primary calendar not found or error occurred")
+                }
+            }
+        }
 
         getIntentExtras()
         setupActivityViewModel()
@@ -54,7 +75,20 @@ class DateActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        getDateEvents()
+        if (calendarId == "") {
+            FirebaseAuth.getInstance().currentUser?.let {
+                getPrimaryCalendarForUser(it.uid) { calendarEvent ->
+                    if (calendarEvent != null) {
+                        getDateEvents(calendarEvent.calendarId)
+                        Log.d("CalendarId", "Primary calendar ID: ${calendarEvent.calendarId}")
+                    } else {
+                        Log.e("CalendarError", "Primary calendar not found or error occurred")
+                    }
+                }
+            }
+        } else {
+            getDateEvents(calendarId)
+        }
     }
 
     private fun getIntentExtras(): Boolean {
@@ -98,8 +132,11 @@ class DateActivity : AppCompatActivity() {
         }
     }
 
-    private fun getDateEvents() {
-        EventDatabase.getDateEvents(date.year, date.monthValue, date.dayOfMonth) { events ->
+    private fun getDateEvents(calendarId: String) {
+        Log.d("DateActivity", "!date events calendarId = ${this.calendarId}")
+        EventDatabase.getDateEvents(date.year, date.monthValue, date.dayOfMonth,
+            this.calendarId
+        ) { events ->
             _dateEvents.postValue(events)
         }
     }
