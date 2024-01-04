@@ -71,19 +71,12 @@ class DateActivity : AppCompatActivity() {
         observeDateEvents()
         observeMonthEvents()
     }
+
     private fun observeDateEvents() {
         dateEvents.observe(this) { dateEvents ->
             setupEventView(dateEvents)
         }
     }
-//    private fun observeDateEvents() {
-//        dateEvents.observe(this) { dateEvents ->
-//            setupEventView(dateEvents)
-//        }
-//        EventDatabase.getDateEvents(date.year, date.monthValue, date.dayOfMonth) { events ->
-//            _dateEvents.postValue(events)
-//        }
-//    }
 
     private fun observeMonthEvents() {
         dateEvents.observe(this) { dateEvents ->
@@ -105,25 +98,12 @@ class DateActivity : AppCompatActivity() {
         }
     }
 
-//    private fun getDateEvents() {
-//        Log.d("DateActivity", "getDateEvents ${date.year}, ${date.monthValue}")
-//        EventDatabase.getMonthEvents(date.year, date.monthValue) { events ->
-//            Log.d("DateActivity", "getDateEvents - events ${events.map { it }}")
-//
-//            _dateEvents.postValue(events)
-//        }
-//        dateEvents.observe(this) { dateEvents ->
-//            setupEventView(dateEvents)
-//        }
-//        Log.d("DateActivity", "getDateEvents - dateEvents ${dateEvents.map { it }}")
-//    }
-private fun getDateEvents() {
-    Log.d("DateActivity", "getDateEvents ${date.year}, ${date.monthValue}, ${date.dayOfMonth}")
-    EventDatabase.getDateEvents(date.year, date.monthValue, date.dayOfMonth) { events ->
-        Log.d("DateActivity", "getDateEvents - events: ${events.map { it }}")
-        _dateEvents.postValue(events)
+    private fun getDateEvents() {
+        EventDatabase.getDateEvents(date.year, date.monthValue, date.dayOfMonth) { events ->
+            _dateEvents.postValue(events)
+        }
     }
-}
+
     private fun setupEventView(dateEvents: List<DateEvent>?) {
         if (dateEvents == null) return;
 
@@ -140,7 +120,6 @@ private fun getDateEvents() {
     }
 
     private fun createEvent() {
-        Log.d("DateActivity", "createEvent ")
         val intent = Intent(this@DateActivity, CreateEventActivity::class.java)
         intent.putExtra("date", localDateToEpochSecond(date))
         startActivity(intent)

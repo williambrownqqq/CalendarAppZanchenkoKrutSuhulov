@@ -2,6 +2,7 @@ package com.ZanchenkoKrutSugulov.calendarapp
 
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Button
@@ -19,7 +20,10 @@ import com.ZanchenkoKrutSugulov.calendarapp.utils.getHourArray
 import com.ZanchenkoKrutSugulov.calendarapp.utils.getMinuteArray
 import com.ZanchenkoKrutSugulov.calendarapp.utils.getMonthsArray
 import com.ZanchenkoKrutSugulov.calendarapp.utils.getYearsArray
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.util.UUID
@@ -42,18 +46,17 @@ class EditEventActivity : AppCompatActivity() {
     private var useTime = false
 
 
-
-    var eventName = ""
-    var eventDescription = ""
+    private var eventName = ""
+    private var eventDescription = ""
     private var calendarId = ""
     var id: String? = null
 
-    var day = dateTime.dayOfMonth
+    private var day = dateTime.dayOfMonth
     var month = dateTime.monthValue
     var year = dateTime.year
 
-    var hour: Int? = null
-    var minute: Int? = null
+    private var hour: Int? = null
+    private var minute: Int? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,6 +70,8 @@ class EditEventActivity : AppCompatActivity() {
     private fun getIntentExtras() {
         if (intent == null) return
         id = intent.getStringExtra("id")
+        Log.d("EditEventActivity", "!edit event - getIntentExtras id ${id}")
+
     }
 
     private fun getEventInformation() {
@@ -74,26 +79,42 @@ class EditEventActivity : AppCompatActivity() {
 
         getEventFromFirebase(eventId) { dateEvent ->
             runOnUiThread {
+
+                Log.d("EditEventActivity", "!edit event - getEventInformation ${dateEvent}")
+
                 if (dateEvent != null) {
                     onDateEventLoad(dateEvent)
                 }
             }
         }
     }
+
     private fun getEventFromFirebase(eventId: String, callback: (DateEvent?) -> Unit) {
         val database = FirebaseDatabase.getInstance()
-        val eventRef = database.getReference("date_events").child(eventId)
+        val eventRef = database.getReference("date_events")
+        val query = eventRef.orderByChild("id").equalTo(eventId)
 
-        eventRef.get().addOnSuccessListener { dataSnapshot ->
-            val dateEvent = dataSnapshot.getValue(DateEvent::class.java)
-            callback(dateEvent)
-        }.addOnFailureListener {
-            callback(null)
-        }
+        query.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val dateEvent = dataSnapshot.children.firstOrNull()?.getValue(DateEvent::class.java)
+                callback(dateEvent)
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                Log.e("EditEventActivity", "Error getting event: ${databaseError.message}")
+                callback(null)
+            }
+        })
     }
+
 
     private fun onDateEventLoad(dateEvent: DateEvent) {
         this.dateEvent = dateEvent
+
+        Log.d("EditEventActivity", "!edit event - onDateEventLoad  ${dateEvent.id} - ${this.dateEvent}")
+//        id = dateEvent.id
+
+        Log.d("EditEventActivity", "!edit event: ${this.dateEvent}")
 
         if (dateEvent.hour != null || dateEvent.minute != null) useTime = true
 
@@ -213,17 +234,19 @@ class EditEventActivity : AppCompatActivity() {
         }
 
         val dateEvent = createThisDateEvent()
-        if (id.isNullOrEmpty()) {
+        if (this.dateEvent?.id.isNullOrEmpty()) {
+            Log.d("EditEventActivity", "!edit event: id.isNullOrEmpty() -  ${id}")
             EventDatabase.insertDateEvent(dateEvent)
         } else {
-            EventDatabase.updateDateEvent(id!!, dateEvent)
+            Log.d("EditEventActivity", "!edit event: id - ${id}")
+            EventDatabase.updateDateEvent(this.dateEvent?.id!!, dateEvent)
         }
         this.finish()
     }
 
     private fun createThisDateEvent(): DateEvent {
         return DateEvent(
-            id ?: UUID.randomUUID().toString(),
+            this.dateEvent?.id ?: UUID.randomUUID().toString(),
             year,
             month,
             day,

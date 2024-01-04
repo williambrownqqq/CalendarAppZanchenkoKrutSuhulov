@@ -59,25 +59,14 @@ class CreateEventActivity : AppCompatActivity() {
     private var minute: Int? = null
 
 
-    private lateinit var backButton: ImageView
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_event)
-
-
-        backButton = findViewById(R.id.backFromCreateEvent)
 
         setupViewModel()
 
         getIntentExtras()
         setupUi()
-
-
-        backButton.setOnClickListener {
-            finish()
-        }
     }
 
     private fun setupUi() {

@@ -13,7 +13,7 @@ object EventDatabase : DateEventDao {
     private val database = FirebaseDatabase.getInstance()
     private val collection = database.getReference("date_events")
     override fun insertDateEvent(dateEvent: DateEvent) {
-        collection.child(collection.push().key ?: return).setValue(dateEvent)
+        collection.child(dateEvent.id).setValue(dateEvent)
     }
 
     override fun updateDateEvent(eventId: String, updatedDateEvent: DateEvent) {

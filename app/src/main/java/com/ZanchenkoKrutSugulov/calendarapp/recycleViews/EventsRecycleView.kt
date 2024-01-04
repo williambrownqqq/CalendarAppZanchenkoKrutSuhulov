@@ -15,6 +15,7 @@ import com.ZanchenkoKrutSugulov.calendarapp.R
 import com.ZanchenkoKrutSugulov.calendarapp.EditEventActivity
 import com.ZanchenkoKrutSugulov.calendarapp.dataClasses.DateEvent
 
+@RequiresApi(Build.VERSION_CODES.O)
 class EventsRecycleViewAdapter(private val dateEvents: List<DateEvent>, private val application: AppCompatActivity, private val onClearClick: (dateEvent: DateEvent) -> Unit): RecyclerView.Adapter<EventsRecycleViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EventsRecycleViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
@@ -26,21 +27,19 @@ class EventsRecycleViewAdapter(private val dateEvents: List<DateEvent>, private 
         return dateEvents.size
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: EventsRecycleViewHolder, position: Int) {
         holder.bind(dateEvents[position], onClearClick) { dateEvent ->
             onEditClick(dateEvent)
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     private fun onEditClick(dateEvent: DateEvent) {
-        Log.d("EventsRecycleView", "!Event view - onEditClick")
+        Log.d("EventsRecycleView", "!edit Event view - onEditClick - dateEvent $dateEvent")
+        Log.d("EventsRecycleView", "!edit Event view - onEditClick - dateEvent ${dateEvent.id}")
         val intent = Intent(application, EditEventActivity::class.java)
-        intent.putExtra("eventId", dateEvent.id)
+        intent.putExtra("id", dateEvent.id)
         application.startActivity(intent)
     }
-
 }
 
 class EventsRecycleViewHolder(private val view: View): RecyclerView.ViewHolder(view) {
