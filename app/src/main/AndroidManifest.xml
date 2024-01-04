@@ -3,6 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
         android:allowBackup="true"
@@ -37,9 +39,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".CreateEventActivity"
-            android:exported="false"
+            android:exported="true"
             android:theme="@style/Theme.CalendarApp" />
         <activity
             android:name=".EditEventActivity"
@@ -49,6 +52,9 @@
             android:name=".DateActivity"
             android:exported="true"
             android:theme="@style/Theme.CalendarApp" />
+        <receiver
+            android:name=".NotificationReceiver"/>
     </application>
+
 
 </manifest>

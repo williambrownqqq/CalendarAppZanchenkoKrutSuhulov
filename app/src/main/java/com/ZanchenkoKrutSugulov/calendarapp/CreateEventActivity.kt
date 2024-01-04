@@ -1,5 +1,8 @@
 package com.ZanchenkoKrutSugulov.calendarapp
 
+import java.util.*
+import android.app.PendingIntent
+import com.ZanchenkoKrutSugulov.calendarapp.NotificationReceiver
 import android.os.Build
 import android.os.Bundle
 import android.view.View
@@ -10,8 +13,17 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.Spinner
 import androidx.annotation.RequiresApi
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import android.app.AlarmManager
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
+import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
 import com.ZanchenkoKrutSugulov.calendarapp.dataClasses.DateEvent
 import com.ZanchenkoKrutSugulov.calendarapp.database.dao.EventDatabase
 import com.google.android.material.switchmaterial.SwitchMaterial
@@ -28,6 +40,13 @@ import java.util.UUID
 
 @RequiresApi(Build.VERSION_CODES.O)
 class CreateEventActivity : AppCompatActivity() {
+    private val notificationManager by lazy {
+        getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+    }
+
+    private val alarmManager by lazy {
+        getSystemService(Context.ALARM_SERVICE) as AlarmManager
+    }
 
     private var startDateTime: ZonedDateTime = ZonedDateTime.now()
     private var dateTime: ZonedDateTime = startDateTime
@@ -64,7 +83,7 @@ class CreateEventActivity : AppCompatActivity() {
         setContentView(R.layout.activity_create_event)
 
         setupViewModel()
-
+        createNotificationChannel()
         getIntentExtras()
         setupUi()
     }
@@ -162,9 +181,11 @@ class CreateEventActivity : AppCompatActivity() {
             hour = hourSpinner.selectedItem.toString().toInt()
             minute = minuteSpinner.selectedItem.toString().toInt()
         }
-
+        val currentTimeMillis = System.currentTimeMillis()
+        setNotification(currentTimeMillis)
 
         val dateEvent = createThisDateEvent()
+
         if (id.isNullOrEmpty()) {
             EventDatabase.insertDateEvent(dateEvent)
         } else {
@@ -190,4 +211,30 @@ class CreateEventActivity : AppCompatActivity() {
         dateTime = startDateTime
         setupSpinners()
     }
+
+    private fun setNotification(eventTime: Long) {
+        val intent = Intent(this, NotificationReceiver::class.java)
+        val pendingIntent = PendingIntent.getBroadcast(
+            this,
+            0,
+            intent,
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+        )
+        val milliseconds = 10000
+        val eventTime = System.currentTimeMillis().toLong() + milliseconds.toLong()
+        Log.d("ALARM", "ALARM created: " + eventTime + pendingIntent.toString());
+        alarmManager.set(AlarmManager.RTC_WAKEUP, eventTime, pendingIntent)
+    }
+    private fun createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                "event_channel",
+                "Event Channel",
+                NotificationManager.IMPORTANCE_HIGH
+            )
+            notificationManager.createNotificationChannel(channel)
+            Log.d("CHANNEL", "Channel created: " + channel.toString());
+        }
+    }
+
 }
