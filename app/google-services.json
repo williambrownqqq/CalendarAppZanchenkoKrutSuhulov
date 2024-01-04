@@ -31,6 +31,14 @@
           }
         },
         {
+          "client_id": "508784181273-f3a155sot8u3mf9qmj9uqns4s8ibl4mi.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ZanchenkoKrutSugulov.calendarapp",
+            "certificate_hash": "aa813c669dba1711974e01701e8dca80d02adb94"
+          }
+        },
+        {
           "client_id": "508784181273-e5ujrb1b78t481p7q3k65lq6o2tvbitt.apps.googleusercontent.com",
           "client_type": 3
         }

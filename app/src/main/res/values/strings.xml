@@ -18,4 +18,5 @@
     <string name="events_of_months">Events of months</string>
     <string name="arrow_back_calendars">arrow-back-calendars</string>
     <string name="arrow_back_create_event">arrow-back-create-event</string>
+    <string name="sync_google">Sync Google</string>
 </resources>
