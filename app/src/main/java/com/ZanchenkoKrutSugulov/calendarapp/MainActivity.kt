@@ -28,8 +28,6 @@ import com.ZanchenkoKrutSugulov.calendarapp.recycleViews.EventsRecycleViewAdapte
 import com.ZanchenkoKrutSugulov.calendarapp.utils.getMonthsArray
 import com.ZanchenkoKrutSugulov.calendarapp.utils.getYearsArray
 import com.ZanchenkoKrutSugulov.calendarapp.utils.localDateToEpochSecond
-import com.ZanchenkoKrutSugulov.calendarapp.viewModels.activities.MainActivityViewModel
-import com.ZanchenkoKrutSugulov.calendarapp.viewModels.activities.DateEventViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import java.time.ZonedDateTime
@@ -40,7 +38,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var buttonShowProfile: ImageButton
     private lateinit var buttonMenu: ImageButton
     private var currentUser: FirebaseUser? = null
-    private lateinit var activityViewModel: MainActivityViewModel
     private var monthEvents: LiveData<List<DateEvent>> = MutableLiveData()
     var currentDate: ZonedDateTime = ZonedDateTime.now()
 
@@ -79,7 +76,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupActivityViewModel() {
-//        activityViewModel = ViewModelProvider(this)[MainActivityViewModel::class.java]
         observeMonthEvents()
     }
 
@@ -94,21 +90,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun getMonthEvents() {
-        Log.d("MainActivity", "!EVENTS getMonthEvents")
-//        activityViewModel.getMonthEvents()
         val year = currentDate.year
         val month = currentDate.monthValue
         val liveData = monthEvents as MutableLiveData
-        Log.d("MainActivityViewModel", "!EVENTS getMonthEvents before EventDatabase")
 
         EventDatabase.getMonthEvents(year, month) { events ->
             liveData.postValue(events)
         }
-
-        Log.d(
-            "MainActivityViewModel",
-            "!EVENTS getMonthEvents EventDatabase ${monthEvents.map { it }}"
-        )
         observeMonthEvents()
     }
 
@@ -202,7 +190,6 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun eventClearClick(dateEvent: DateEvent) {
-        val dateEventViewModel = ViewModelProvider(this).get(DateEventViewModel::class.java)
-        dateEventViewModel.deleteDateEvent(dateEvent.id)
+        EventDatabase.deleteDateEvent(dateEvent.id)
     }
 }
