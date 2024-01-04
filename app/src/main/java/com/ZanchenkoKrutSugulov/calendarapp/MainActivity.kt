@@ -106,8 +106,6 @@ class MainActivity : AppCompatActivity() {
 
         monthSpinner.adapter = ArrayAdapter(this, R.layout.custom_spinner, getMonthsArray())
         yearSpinner.adapter = ArrayAdapter(this, R.layout.custom_spinner, getYearsArray())
-
-        Log.d("setupSpinners", "!setupSpinners ${monthSpinner.adapter}")
         monthSpinner.setSelection(currentDate.monthValue - 1)
         yearSpinner.setSelection(currentDate.year - 2000)
 
@@ -119,8 +117,6 @@ class MainActivity : AppCompatActivity() {
                 id: Long
             ) {
                 currentDate = currentDate.withMonth(position + 1)
-
-                Log.d("setupSpinners", "!monthSpinner getMonthEvents ${monthSpinner.adapter}")
                 getMonthEvents()
             }
 
@@ -135,7 +131,6 @@ class MainActivity : AppCompatActivity() {
                 id: Long
             ) {
                 currentDate = currentDate.withYear(position + 2000)
-                Log.d("setupSpinners", "!yearSpinner getMonthEvents ${monthSpinner.adapter}")
                 getMonthEvents()
             }
 

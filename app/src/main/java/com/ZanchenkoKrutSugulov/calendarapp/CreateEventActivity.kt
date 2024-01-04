@@ -2,6 +2,7 @@ package com.ZanchenkoKrutSugulov.calendarapp
 
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Button
@@ -20,7 +21,10 @@ import com.ZanchenkoKrutSugulov.calendarapp.utils.getDaysArray
 import com.ZanchenkoKrutSugulov.calendarapp.utils.getHourArray
 import com.ZanchenkoKrutSugulov.calendarapp.utils.getMinuteArray
 import com.ZanchenkoKrutSugulov.calendarapp.utils.getMonthsArray
+import com.ZanchenkoKrutSugulov.calendarapp.utils.getPrimaryCalendarForUser
 import com.ZanchenkoKrutSugulov.calendarapp.utils.getYearsArray
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.FirebaseDatabase
 import java.time.ZonedDateTime
 import java.util.UUID
@@ -52,16 +56,31 @@ class CreateEventActivity : AppCompatActivity() {
     var id: String? = null
 
     private var day = dateTime.dayOfMonth
-    var month = dateTime.monthValue
-    var year = dateTime.year
+    private var month = dateTime.monthValue
+    private var year = dateTime.year
 
     private var hour: Int? = null
     private var minute: Int? = null
 
 
+
+    private var currentUser: FirebaseUser? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_event)
+        currentUser = FirebaseAuth.getInstance().currentUser
+
+        currentUser?.let {
+            getPrimaryCalendarForUser(it.uid) { calendarEvent ->
+                if (calendarEvent != null) {
+                    calendarId = calendarEvent.calendarId
+                    Log.d("CalendarId", "Primary calendar ID: $calendarId")
+                } else {
+                    Log.e("CalendarError", "Primary calendar not found or error occurred")
+                }
+            }
+        }
 
         setupViewModel()
 
