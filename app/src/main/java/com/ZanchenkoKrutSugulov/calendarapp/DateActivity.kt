@@ -133,10 +133,7 @@ class DateActivity : AppCompatActivity() {
     }
 
     private fun getDateEvents(calendarId: String) {
-        Log.d("DateActivity", "!date events calendarId = ${this.calendarId}")
-        EventDatabase.getDateEvents(date.year, date.monthValue, date.dayOfMonth,
-            this.calendarId
-        ) { events ->
+        EventDatabase.getDateEvents(date.year, date.monthValue, date.dayOfMonth, calendarId) { events ->
             _dateEvents.postValue(events)
         }
     }
